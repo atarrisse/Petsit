@@ -1,0 +1,46 @@
+{
+  "name": "Bessi",
+  "age": "16",
+  "size": "Small (up to 8kg)",
+  "breed": "Corgi mix",
+  "gender": "Female",
+  "vaccinated": true,
+  "neutered": true,
+  "chipped": true,
+  "houseTrained": true,
+  "alerts": ["Epilepsy"],
+  "alone": "Short periods of time",
+  "feeding": ["Morning", "Evening"],
+  "treats": ["In moderation"],
+  "bathroom": [
+    "Every 3/4 hours. She will stand by the door or try to guide you to the door."
+  ],
+  "energy": "Low",
+  "exercise": "",
+  "enjoys": ["Cucumber"],
+  "behavior": ["Eat dirt from plants"],
+  "barking": ["At dogs outside"],
+  "struggles": [
+    "children",
+    "Dogs outdoor"
+  ],
+  "health": [
+    "Epilepsy",
+    "Anxiety",
+    "Bad eyesight",
+    "Bad hearing",
+    "No teeth",
+    "No stairs",
+    "No jumping"
+  ],
+  "training": [
+    "She can't hear well anymore, so none"
+  ],
+  "veterinarian": "https://maps.app.goo.gl/hGvJp7fhdBZ95LQt6",
+  "insurance": false,
+  "trauma": [""],
+  "medication": [
+    "Levetiracetam 250mg: 1/2 a pill, 2 times a day",
+    "Luminaletten 15 mg: 1/2 a pill, 1 time a day"
+  ]
+}
