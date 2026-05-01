@@ -1,0 +1,30 @@
+{
+    "name": "",
+    "age": "",
+    "size": "",
+    "breed": "",
+    "gender": "",
+    "energy": "",
+    "vaccinated": true,
+    "neutered": true,
+    "chipped": true,
+    "houseTrained": true,
+    "insurance": false,
+    "alerts": [""],
+    "alone": "",
+    "feeding": ["", ""],
+    "treats": [""],
+    "bathroom": [""],
+    "exercise": "",
+    "enjoys": [""],
+    "struggles": [""],
+    "behavior": [""],
+    "barking": [""],
+    "training": [""],
+    "health": [""],
+    "veterinarian": "",
+    "trauma": [""],
+    "medication": [""]
+  }
+  
+  
