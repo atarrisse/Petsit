@@ -1,0 +1,69 @@
+{
+  "name": "Cheeno",
+  "age": "4,5",
+  "size": "Big (18~45kg)",
+  "breed": "Catahoula leopard",
+  "gender": "Female",
+  "energy": "High",
+  "vaccinated": true,
+  "neutered": false,
+  "chipped": true,
+  "houseTrained": true,
+  "insurance": true,
+  "alerts": ["Always on leash"],
+  "warning": [
+    "Clumdsy dog, caution with hands"
+  ],
+  "alone": "Yes, she has a crate",
+  "feeding": [
+    "After morning walk, 120g kibble or 250g meat",
+    "After afternoon walk, between 17~18h, 120g kibble or 250g meat"
+  ],
+  "treats": [
+    "She loves treats :)",
+    "Dry cow ears, that she can get after her evening meal to chew on."
+  ],
+  "bathroom": [
+    "Morning, 8~9h",
+    "Afternoon, 17",
+    "Evening, around 21h"
+  ],
+  "exercise": "",
+  "enjoys": ["Search", "Balls", "Dogs"],
+  "struggles": [
+    "People",
+    "Children",
+    "Afraid of lots of things",
+    "lound engine noises",
+    "firecrackers"
+  ],
+  "behavior": [
+    "She can get pretty wild, so it's important to play with structure",
+    "doesn't like to be disturbed when she sleep",
+    "can resource guarding the couch, if you don't set up rules before",
+    "If she gets scared she likes to get in a safe space, like in a building entrance or something like this"
+  ],
+  "barking": [""],
+  "training": [
+    "She can only jump up on the couch when you say it's ok and you can train her by inviting her and then saying down and throw a treat on the floor",
+    "She is not allowed to be around waiting when you're eating (no laying down under the table). Her behavior is kind of tense when something eatable falls down and she is super fast. You can basically say no, and tell her to go to bed if she's placing her self under the table when you are eating."
+  ],
+  "commands": [
+    "sit",
+    "Platz",
+    "stay",
+    "come",
+    "prima (when she does something good)",
+    "relax (from laying down)",
+    "speak",
+    "stop",
+    "Seite (stand close to your left leg)",
+    "search",
+    "no",
+    "go to bed"
+  ],
+  "health": [""],
+  "veterinarian": "https://maps.app.goo.gl/5jZEUzbKXsa1t6v16",
+  "trauma": [""],
+  "medication": [""]
+}
