@@ -1,0 +1,134 @@
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: clamp(16px, 4vw, 36px);
+}
+
+.page__header {
+  margin-bottom: var(--s-5);
+}
+
+.page__title {
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+}
+
+.page__subtitle {
+  color: var(--muted);
+  margin: 0;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--s-5);
+  box-shadow: var(--shadow);
+}
+
+.card__title {
+  font-size: 1.2rem;
+  margin-bottom: var(--s-3);
+}
+
+.dogList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--s-3);
+}
+
+.dogList__item {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  padding: var(--s-3);
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid var(--border);
+}
+
+.dogList__link {
+  font-weight: 700;
+}
+
+.dogList__meta {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.sheet {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: clamp(14px, 3vw, 28px);
+}
+
+.sheetHeader {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--s-5);
+  box-shadow: var(--shadow);
+}
+
+.sheetHeader__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+
+.sheetHeader__name {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin: 0;
+}
+
+.sheetHeader__meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-2) var(--s-4);
+  margin-top: var(--s-3);
+  color: var(--fg);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-5);
+  margin-top: var(--s-5);
+}
+
+.col {
+  display: grid;
+  gap: var(--s-4);
+  align-content: start;
+}
+
+.sheetFooter {
+  margin-top: var(--s-5);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: var(--s-3);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-2) var(--s-4);
+}
+
+@media (max-width: 860px) {
+  .sheetHeader__meta {
+    grid-template-columns: 1fr;
+  }
+
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .facts {
+    grid-template-columns: 1fr;
+  }
+}
+

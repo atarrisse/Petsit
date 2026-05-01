@@ -1,0 +1,15 @@
+{
+  "name": "Pet Care",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Website to manage the dogs I petsit",
+  "license": "UNLICENSED",
+  "author": "Ana Tarrisse",
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "dependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}

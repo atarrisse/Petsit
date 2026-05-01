@@ -1,0 +1,45 @@
+@page {
+  size: A4;
+  margin: 14mm 12mm;
+}
+
+@media print {
+  :root {
+    --shadow: none;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .sheet,
+  .page {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sheetHeader,
+  .section,
+  .card,
+  .banner {
+    box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .columns {
+    gap: 10mm;
+  }
+
+  .section,
+  .sheetHeader,
+  .banner {
+    break-inside: avoid;
+  }
+
+  a {
+    text-decoration: none;
+  }
+}
+

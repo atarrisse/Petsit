@@ -1,0 +1,39 @@
+---
+permalink: "/"
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pet care sheets</title>
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/layout.css" />
+    <link rel="stylesheet" href="/styles/components.css" />
+    <link rel="stylesheet" href="/styles/print.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page__header">
+        <h1 class="page__title">Pet care sheets</h1>
+        <p class="page__subtitle">Printable, A4-friendly care instructions.</p>
+      </header>
+
+      <section class="card">
+        <h2 class="card__title">Dogs</h2>
+        <ul class="dogList">
+          {% for dog in collections.dogs %}
+            <li class="dogList__item">
+              <a class="dogList__link" href="{{ dog.url }}">{{ dog.name }}</a>
+              <span class="dogList__meta">
+                {% if dog.breed %}{{ dog.breed }}{% endif %}
+                {% if dog.size %} · {{ dog.size }}{% endif %}
+              </span>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
+

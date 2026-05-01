@@ -1,0 +1,102 @@
+---
+pagination:
+  data: collections.dogs
+  size: 1
+  alias: dog
+permalink: "dogs/{{ dog.slug }}/index.html"
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ dog.name }} — Care sheet</title>
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/layout.css" />
+    <link rel="stylesheet" href="/styles/components.css" />
+    <link rel="stylesheet" href="/styles/print.css" />
+  </head>
+  <body>
+    {% from "section.njk" import section %}
+    <main class="sheet">
+      <header class="sheetHeader">
+        <div class="sheetHeader__top">
+          <h1 class="sheetHeader__name">{{ dog.name }}</h1>
+          {% if dog.energy %}
+            <span class="pill pill--energy">Energy: {{ dog.energy }}</span>
+          {% endif %}
+        </div>
+
+        <div class="sheetHeader__meta">
+          {% if dog.age %}<div><span class="label">Age</span> {{ dog.age }}</div>{% endif %}
+          {% if dog.breed %}<div><span class="label">Breed</span> {{ dog.breed }}</div>{% endif %}
+          {% if dog.size %}<div><span class="label">Size</span> {{ dog.size }}</div>{% endif %}
+        </div>
+
+              <div class="sheetFooter">
+        <div class="facts">
+          {% if dog.vaccinated is defined %}
+            <div><span class="label">Vaccinated</span> {% if dog.vaccinated %}Yes{% else %}No{% endif %}</div>
+          {% endif %}
+          {% if dog.neutered is defined %}
+            <div><span class="label">Neutered</span> {% if dog.neutered %}Yes{% else %}No{% endif %}</div>
+          {% endif %}
+          {% if dog.chipped is defined %}
+            <div><span class="label">Chipped</span> {% if dog.chipped %}Yes{% else %}No{% endif %}</div>
+          {% endif %}
+          {% if dog.houseTrained is defined %}
+            <div><span class="label">House trained</span> {% if dog.houseTrained %}Yes{% else %}No{% endif %}</div>
+          {% endif %}
+          {% if dog.insurance is defined %}
+            <div><span class="label">Insurance</span> {% if dog.insurance %}Yes{% else %}No{% endif %}</div>
+          {% endif %}
+        </div>
+
+        {% if dog.veterinarian %}
+          <div class="small">
+            <span class="label">Vet</span>
+            <a href="{{ dog.veterinarian }}">{{ dog.veterinarian }}</a>
+          </div>
+        {% endif %}
+      </div>
+      </header>
+
+      {% if dog.alone %}
+        <div class="banner banner--warning">
+          <strong>Alone time:</strong> {{ dog.alone }}
+        </div>
+      {% endif %}
+
+      {% if dog.alerts and dog.alerts.length %}
+        <div class="banner banner--alert">
+          <strong>Alerts:</strong>
+          <ul class="banner__list">
+            {% for alert in dog.alerts %}
+              <li>{{ alert }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <section class="columns">
+        <div class="col">
+          {{ section("Feeding", dog.feeding) }}
+          {{ section("Treats", dog.treats) }}
+          {{ section("Bathroom", dog.bathroom) }}
+          {{ section("Exercise", dog.exercise) }}
+          {{ section("Health", dog.health) }}
+          {{ section("Trauma", dog.trauma) }}
+        </div>
+
+        <div class="col">
+          {{ section("Enjoys", dog.enjoys) }}
+          {{ section("Struggles", dog.struggles) }}
+          {{ section("Behaviour", dog.behavior) }}
+          {{ section("Barking", dog.barking) }}
+          {{ section("Training", dog.training) }}
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
+
