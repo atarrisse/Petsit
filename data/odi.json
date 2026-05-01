@@ -3,25 +3,63 @@
   "age": "10 years, born 2016",
   "size": "Medium, 12kg",
   "breed": "Mixed",
+  "gender": "Male",
   "vaccinated": true,
   "neutered": true,
   "chipped": true,
   "houseTrained": true,
-  "alerts": ["Food allergies", "Fear of dogs"],
+  "alerts": [
+    "Food allergies",
+    "Fear of dogs"
+  ],
   "alone": "Not at all",
-  "feeding": ["Morning, after hooman's breakfast, ~200g"],
-  "treats": ["Use his own treat", "Pick kibble from daily portion"],
-  "bathroom": ["About 1h after his breakfast", "Late afternoon, around 18:00"],
+  "feeding": [
+    "Morning, after hooman's breakfast, ~200g"
+  ],
+  "treats": [
+    "Use his own treat",
+    "Pick kibble from daily portion"
+  ],
+  "bathroom": [
+    "About 1h after his breakfast",
+    "Late afternoon, around 18:00"
+  ],
   "energy": "medium",
   "exercise": "If you let him, he'll run forever. He's gonna bring you his toys whenever he wants to play, but if you're busy tell him to go to his bed and he'll understand.",
-  "enjoys": ["Paper tubes", "Running", "Sticks", "Balls", "Cuddles"],
-  "behavior": ["Food motivated", "Eats things from the floor"],
-  "barking": ["Doorbell", "Noises outside", "Dogs"],
-  "struggles": ["Dogs", "Loud noises 🎆 ⛈️", "Children", "Cats"],
-  "health": ["Allergic to animal protein", "Former chubby"],
-  "training": ["Send to bed to calm him down", "Commands in Polish", "Understands body language"],
+  "enjoys": [
+    "Paper tubes",
+    "Running",
+    "Sticks",
+    "Balls",
+    "Cuddles"
+  ],
+  "behavior": [
+    "Food motivated",
+    "Eats things from the floor"
+  ],
+  "barking": [
+    "Doorbell",
+    "Noises outside",
+    "Dogs"
+  ],
+  "struggles": [
+    "Dogs",
+    "Loud noises 🎆 ⛈️",
+    "Children",
+    "Cats"
+  ],
+  "health": [
+    "Allergic to animal protein",
+    "Former chubby"
+  ],
+  "training": [
+    "Send to bed to calm him down",
+    "Commands in Polish",
+    "Understands body language"
+  ],
   "veterinarian": "https://maps.app.goo.gl/FTBoQbMUoqsC6uL56",
   "insurance": false,
-  "trauma": ["Attacked by other dogs about 10 times"]
+  "trauma": [
+    "Attacked by other dogs about 10 times"
+  ]
 }
-

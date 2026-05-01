@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: true
 
 jobs:
@@ -30,9 +30,12 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Prettier check
+        run: npm run format:check
+
       - name: Build
         env:
-          ELEVENTY_PATH_PREFIX: "/${{ github.event.repository.name }}/"
+          ELEVENTY_PATH_PREFIX: '/${{ github.event.repository.name }}/'
         run: npm run build
 
       - name: Upload Pages artifact
@@ -50,4 +53,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-

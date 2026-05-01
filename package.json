@@ -16,9 +16,14 @@
   "scripts": {
     "dev": "eleventy --serve",
     "start": "npm run dev",
-    "build": "eleventy"
+    "build": "eleventy",
+    "format": "prettier . --write --ignore-unknown",
+    "format:check": "prettier . --check --ignore-unknown"
   },
   "dependencies": {
     "@11ty/eleventy": "^3.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
   }
 }
