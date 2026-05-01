@@ -7,10 +7,10 @@ permalink: "/"
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Pet care sheets</title>
-    <link rel="stylesheet" href="/styles/main.css" />
-    <link rel="stylesheet" href="/styles/layout.css" />
-    <link rel="stylesheet" href="/styles/components.css" />
-    <link rel="stylesheet" href="/styles/print.css" />
+    <link rel="stylesheet" href="{{ '/styles/main.css' | url }}" />
+    <link rel="stylesheet" href="{{ '/styles/layout.css' | url }}" />
+    <link rel="stylesheet" href="{{ '/styles/components.css' | url }}" />
+    <link rel="stylesheet" href="{{ '/styles/print.css' | url }}" />
   </head>
   <body>
     <main class="page">
@@ -24,7 +24,7 @@ permalink: "/"
         <ul class="dogList">
           {% for dog in collections.dogs %}
             <li class="dogList__item">
-              <a class="dogList__link" href="{{ dog.url }}">{{ dog.name }}</a>
+              <a class="dogList__link" href="{{ dog.url | url }}">{{ dog.name }}</a>
               <span class="dogList__meta">
                 {% if dog.breed %}{{ dog.breed }}{% endif %}
                 {% if dog.size %} · {{ dog.size }}{% endif %}

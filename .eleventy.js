@@ -20,6 +20,12 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter("isArray", (value) => Array.isArray(value));
   eleventyConfig.addPassthroughCopy({ styles: "styles" });
 
+  const rawPrefix = process.env.ELEVENTY_PATH_PREFIX;
+  const pathPrefix =
+    rawPrefix && rawPrefix !== "/"
+      ? `/${String(rawPrefix).replace(/^\/+|\/+$/g, "")}/`
+      : "/";
+
   eleventyConfig.addCollection("dogs", function () {
     const dataDir = path.join(__dirname, "data");
     if (!fs.existsSync(dataDir)) return [];
@@ -60,6 +66,7 @@ module.exports = function (eleventyConfig) {
   });
 
   return {
+    pathPrefix,
     dir: {
       input: "templates",
       includes: "partials",

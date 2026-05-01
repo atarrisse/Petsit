@@ -23,11 +23,8 @@ Or, equivalently:
 npx @11ty/eleventy --serve
 ```
 
-## Deploy to Vercel
-This builds to a static output folder (`_site`).
+## Deploy to GitHub Pages
+This repository deploys automatically to GitHub Pages on pushes to `main` using GitHub Actions.
 
-- **Build command**: `npm run build`
-- **Output directory**: `_site`
-
-No client-side JavaScript is used; the output is pure HTML + CSS.
+- **Live site**: `https://atarrisse.github.io/Petsit/`
 

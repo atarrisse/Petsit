@@ -5,8 +5,17 @@
   "description": "Website to manage the dogs I petsit",
   "license": "UNLICENSED",
   "author": "Ana Tarrisse",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atarrisse/Petsit.git"
+  },
+  "homepage": "https://atarrisse.github.io/Petsit/",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "eleventy --serve",
+    "start": "npm run dev",
     "build": "eleventy"
   },
   "dependencies": {
