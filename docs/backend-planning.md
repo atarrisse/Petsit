@@ -223,4 +223,3 @@ Static site CI will be configured to set `API_URL` during build so Eleventy can 
 - **Phase 2**: Eleventy uses backend at build-time.
 - **Phase 3**: Write endpoints + admin UI + auth.
 - **Phase 4**: Hosted backend + CI wiring + “publish” workflow.
-

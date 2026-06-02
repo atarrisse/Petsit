@@ -2,11 +2,11 @@
 
 Living record of **what we planned**, **what we decided**, and **what we shipped** for the Python + PostgreSQL backend.
 
-| Document | Role |
-|----------|------|
+| Document                                     | Role                                                     |
+| -------------------------------------------- | -------------------------------------------------------- |
 | [`backend-planning.md`](backend-planning.md) | **Canonical spec** — architecture, schema, API contracts |
-| [`backend-concepts.md`](backend-concepts.md) | Metaphors for FastAPI, SQLAlchemy, Alembic, etc. |
-| **This file** | **Progress tracker + changelog** — update as we go |
+| [`backend-concepts.md`](backend-concepts.md) | Metaphors for FastAPI, SQLAlchemy, Alembic, etc.         |
+| **This file**                                | **Progress tracker + changelog** — update as we go       |
 
 ---
 
@@ -14,25 +14,25 @@ Living record of **what we planned**, **what we decided**, and **what we shipped
 
 Status key: `done` | `in_progress` | `pending` | `skipped`
 
-| # | Phase | Task | Status | Notes |
-|---|-------|------|--------|-------|
-| 0 | Docs | Official spec [`backend-planning.md`](backend-planning.md) | done | User committed |
-| 0 | Docs | Remove outdated `backend-handoff.md`; planning is single source of truth | done | |
-| 0 | Docs | Concepts / metaphors [`backend-concepts.md`](backend-concepts.md) | done | |
-| 0 | Docs | This implementation log | done | Updated each milestone |
-| 1 | Scaffold | `backend/` project (`requirements.txt`, `.env.example`, FastAPI app) | done | Verified 2026-06-02 |
-| 1 | Scaffold | `.gitignore` for `backend/.env`, `.venv`, Python caches | done | |
-| 2 | Local DB | `docker-compose.yml` for Postgres | done | Postgres 16, db `petsit`, `restart: no` |
-| 2 | DX | Repo root `Makefile` (`db-up`, `dev`, …) | done | No manual `source` for API |
-| 3 | DB | Alembic init + `DATABASE_URL` wiring | pending | **Next** |
-| 4 | DB | SQLAlchemy models (DDD tables) | pending | See planning doc |
-| 5 | DB | Initial Alembic migration | pending | |
-| 6 | API | `GET /api/dogs`, `GET /api/dogs/{slug}` (domain shape) | pending | |
-| 7 | API | `GET /api/legacy/dogs`, `GET /api/legacy/dogs/{slug}` | pending | Option A: separate paths |
-| 8 | Data | `backend/scripts/import_json.py` | pending | Best-effort from `data/*.json` |
-| 9 | Build | Eleventy fetches legacy API at build time | pending | `API_URL` env |
-| 10 | Admin | Write endpoints + auth | pending | Phase 3 |
-| 11 | Deploy | Neon/Supabase + Railway/Render + CI `API_URL` | pending | Phase 4 |
+| #   | Phase    | Task                                                                     | Status  | Notes                                   |
+| --- | -------- | ------------------------------------------------------------------------ | ------- | --------------------------------------- |
+| 0   | Docs     | Official spec [`backend-planning.md`](backend-planning.md)               | done    | User committed                          |
+| 0   | Docs     | Remove outdated `backend-handoff.md`; planning is single source of truth | done    |                                         |
+| 0   | Docs     | Concepts / metaphors [`backend-concepts.md`](backend-concepts.md)        | done    |                                         |
+| 0   | Docs     | This implementation log                                                  | done    | Updated each milestone                  |
+| 1   | Scaffold | `backend/` project (`requirements.txt`, `.env.example`, FastAPI app)     | done    | Verified 2026-06-02                     |
+| 1   | Scaffold | `.gitignore` for `backend/.env`, `.venv`, Python caches                  | done    |                                         |
+| 2   | Local DB | `docker-compose.yml` for Postgres                                        | done    | Postgres 16, db `petsit`, `restart: no` |
+| 2   | DX       | Repo root `Makefile` (`db-up`, `dev`, …)                                 | done    | No manual `source` for API              |
+| 3   | DB       | Alembic init + `DATABASE_URL` wiring                                     | pending | **Next**                                |
+| 4   | DB       | SQLAlchemy models (DDD tables)                                           | pending | See planning doc                        |
+| 5   | DB       | Initial Alembic migration                                                | pending |                                         |
+| 6   | API      | `GET /api/dogs`, `GET /api/dogs/{slug}` (domain shape)                   | pending |                                         |
+| 7   | API      | `GET /api/legacy/dogs`, `GET /api/legacy/dogs/{slug}`                    | pending | Option A: separate paths                |
+| 8   | Data     | `backend/scripts/import_json.py`                                         | pending | Best-effort from `data/*.json`          |
+| 9   | Build    | Eleventy fetches legacy API at build time                                | pending | `API_URL` env                           |
+| 10  | Admin    | Write endpoints + auth                                                   | pending | Phase 3                                 |
+| 11  | Deploy   | Neon/Supabase + Railway/Render + CI `API_URL`                            | pending | Phase 4                                 |
 
 ---
 
@@ -98,12 +98,12 @@ make dev      # API → http://localhost:8000/health
 
 Stop DB: `make db-down`. List commands: `make help`.
 
-| URL | Works? |
-|-----|--------|
+| URL                          | Works?                           |
+| ---------------------------- | -------------------------------- |
 | http://localhost:8000/health | Yes (when `make dev` is running) |
-| http://localhost:8000/docs | Yes (Swagger) |
-| http://localhost:8000/ | 404 (no route yet — expected) |
-| http://localhost:5432 | No — Postgres is not a web page |
+| http://localhost:8000/docs   | Yes (Swagger)                    |
+| http://localhost:8000/       | 404 (no route yet — expected)    |
+| http://localhost:5432        | No — Postgres is not a web page  |
 
 ---
 
@@ -126,13 +126,13 @@ Stop DB: `make db-down`. List commands: `make help`.
 
 **Added:**
 
-| Path | Purpose |
-|------|---------|
-| `backend/README.md` | Setup and run instructions |
+| Path                       | Purpose                                                                                  |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `backend/README.md`        | Setup and run instructions                                                               |
 | `backend/requirements.txt` | fastapi, uvicorn, sqlalchemy, alembic, psycopg2-binary, pydantic-settings, python-dotenv |
-| `backend/.env.example` | `DATABASE_URL` for local Docker |
-| `backend/app/__init__.py` | Package marker |
-| `backend/app/main.py` | FastAPI app + `GET /health` |
+| `backend/.env.example`     | `DATABASE_URL` for local Docker                                                          |
+| `backend/app/__init__.py`  | Package marker                                                                           |
+| `backend/app/main.py`      | FastAPI app + `GET /health`                                                              |
 
 **Updated:** `.gitignore` — `backend/.env`, `.venv`, Python caches.
 
@@ -142,30 +142,30 @@ Stop DB: `make db-down`. List commands: `make help`.
 
 **Added:**
 
-| Path | Purpose |
-|------|---------|
+| Path                 | Purpose                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------ |
 | `docker-compose.yml` | Postgres 16 Alpine; user/db `postgres`/`petsit`; port 5432; volume `petsit_pg_data`; healthcheck |
-| `Makefile` | `db-up`, `db-down`, `db-ps`, `dev`, `help` |
+| `Makefile`           | `db-up`, `db-down`, `db-ps`, `dev`, `help`                                                       |
 
 **Updated:**
 
-| Path | Change |
-|------|--------|
-| `backend/README.md` | Quick start via `make`; manual compose/uvicorn fallback |
-| `backend/.env.example` | Filled default `DATABASE_URL` matching compose |
-| `docs/backend-planning.md` | Link to this log |
+| Path                       | Change                                                  |
+| -------------------------- | ------------------------------------------------------- |
+| `backend/README.md`        | Quick start via `make`; manual compose/uvicorn fallback |
+| `backend/.env.example`     | Filled default `DATABASE_URL` matching compose          |
+| `docs/backend-planning.md` | Link to this log                                        |
 
 **Compose choices recorded:**
 
-| Setting | Value | Why |
-|---------|-------|-----|
-| `image` | `postgres:16-alpine` | Pinned major version; small local image |
-| `container_name` | `petsit-db` | Easy to spot in `docker ps` |
-| `restart` | `no` | No auto-start after reboot — explicit `docker compose up -d` |
-| `environment` | `postgres` / `postgres` / `petsit` | Local-only; matches `DATABASE_URL` |
-| `ports` | `5432:5432` | Host `localhost:5432` for app tools |
-| `volumes` | `petsit_pg_data` | Data survives container recreate |
-| `healthcheck` | `pg_isready` | `docker compose ps` shows healthy |
+| Setting          | Value                              | Why                                                          |
+| ---------------- | ---------------------------------- | ------------------------------------------------------------ |
+| `image`          | `postgres:16-alpine`               | Pinned major version; small local image                      |
+| `container_name` | `petsit-db`                        | Easy to spot in `docker ps`                                  |
+| `restart`        | `no`                               | No auto-start after reboot — explicit `docker compose up -d` |
+| `environment`    | `postgres` / `postgres` / `petsit` | Local-only; matches `DATABASE_URL`                           |
+| `ports`          | `5432:5432`                        | Host `localhost:5432` for app tools                          |
+| `volumes`        | `petsit_pg_data`                   | Data survives container recreate                             |
+| `healthcheck`    | `pg_isready`                       | `docker compose ps` shows healthy                            |
 
 **Verified (local):**
 
@@ -196,14 +196,20 @@ uvicorn app.main:app --reload --port 8000
 
 **Updated:** `backend/README.md` — quick start via `make`.
 
+### 2026-06-02 — Git hooks (Husky + lint-staged)
+
+**Added:** `.husky/pre-commit` runs `lint-staged`; `package.json` `prepare` script + `lint-staged` config (`prettier --write --ignore-unknown` on staged files).
+
+**Updated:** root `README.md` — note that `npm install` enables hooks. CI `format:check` unchanged.
+
 **Targets:**
 
-| Target | Action |
-|--------|--------|
-| `make db-up` | `docker compose up -d` |
-| `make db-down` | `docker compose down` |
-| `make db-ps` | `docker compose ps` |
-| `make dev` | `backend/.venv/bin/uvicorn` with reload on :8000 |
+| Target         | Action                                           |
+| -------------- | ------------------------------------------------ |
+| `make db-up`   | `docker compose up -d`                           |
+| `make db-down` | `docker compose down`                            |
+| `make db-ps`   | `docker compose ps`                              |
+| `make dev`     | `backend/.venv/bin/uvicorn` with reload on :8000 |
 
 ---
 
@@ -246,15 +252,17 @@ curl http://localhost:8000/api/dogs/odi
 - [ ] Pin dependency versions in `requirements.txt` for reproducible builds
 - [ ] `pip-audit` or Dependabot in CI
 - [ ] Root `.env.example` for Eleventy `API_URL`
+- [x] Husky + lint-staged — Prettier on staged files at pre-commit (`npm install` enables hook)
 
 ---
 
 ## Session notes
 
-| Date | Note |
-|------|------|
-| 2026-06-02 | Scaffold verified; `/health` + `/docs` on :8000 |
-| 2026-06-02 | `docker compose up` — image pulled, `petsit-db` healthy on :5432 |
+| Date       | Note                                                                  |
+| ---------- | --------------------------------------------------------------------- |
+| 2026-06-02 | Scaffold verified; `/health` + `/docs` on :8000                       |
+| 2026-06-02 | `docker compose up` — image pulled, `petsit-db` healthy on :5432      |
 | 2026-06-02 | Chose `restart: no` (no DB after reboot until `docker compose up -d`) |
-| 2026-06-02 | Added `Makefile` — `make db-up` + `make dev` |
-| 2026-06-02 | **Next:** Alembic init + `DATABASE_URL` wiring in app |
+| 2026-06-02 | Added `Makefile` — `make db-up` + `make dev`                          |
+| 2026-06-02 | Husky + lint-staged — Prettier on staged files at pre-commit          |
+| 2026-06-02 | **Next:** Alembic init + `DATABASE_URL` wiring in app                 |

@@ -105,4 +105,3 @@ In local dev, it’s convenient to keep env vars in a file (`backend/.env`) inst
 **python-dotenv** loads that file into your process environment.
 
 Important: `.env` files usually contain secrets and should not be committed. We commit `.env.example` instead.
-

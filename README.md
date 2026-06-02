@@ -12,6 +12,8 @@ Minimal static site generator that turns one JSON file per dog into a printable,
 npm install
 ```
 
+`npm install` enables a **pre-commit** hook (Husky) that runs Prettier on staged files. CI still runs `npm run format:check` on push.
+
 ## Run locally
 
 ```bash
