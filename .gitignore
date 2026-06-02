@@ -3,6 +3,11 @@ node_modules/
 
 # Eleventy output
 _site/
+.venv/
+backend/.env
+backend/__pycache__/
+backend/.pytest_cache/
+backend/.mypy_cache/
 
 # Logs
 npm-debug.log*
