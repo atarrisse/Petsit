@@ -23,6 +23,7 @@ Status key: `done` | `in_progress` | `pending` | `skipped`
 | 1 | Scaffold | `backend/` project (`requirements.txt`, `.env.example`, FastAPI app) | done | Verified 2026-06-02 |
 | 1 | Scaffold | `.gitignore` for `backend/.env`, `.venv`, Python caches | done | |
 | 2 | Local DB | `docker-compose.yml` for Postgres | done | Postgres 16, db `petsit`, `restart: no` |
+| 2 | DX | Repo root `Makefile` (`db-up`, `dev`, …) | done | No manual `source` for API |
 | 3 | DB | Alembic init + `DATABASE_URL` wiring | pending | **Next** |
 | 4 | DB | SQLAlchemy models (DDD tables) | pending | See planning doc |
 | 5 | DB | Initial Alembic migration | pending | |
@@ -49,8 +50,9 @@ Recorded here so we do not re-litigate during implementation.
 ### Local infrastructure
 
 - **Postgres in Docker** via repo-root `docker-compose.yml` (not Homebrew Postgres).
-- **`restart: no`** on `db` — containers do **not** auto-start after Mac/Docker reboot; run `docker compose up -d` when coding.
-- **Docker Desktop** (or compatible engine) required on Mac for local Postgres.
+- **`restart: no`** on `db` — containers do **not** auto-start after Mac/Docker reboot; run `make db-up` when coding.
+- **Docker Desktop** (or compatible engine) required on Mac for `make db-up`.
+- **Dev shortcuts** from repo root: `make db-up`, `make dev` (see `Makefile`); API uses `backend/.venv/bin/uvicorn` without `source`.
 
 ### Data model (DDD)
 
@@ -77,7 +79,7 @@ We commit in small vertical slices; user commits unless they ask the agent to.
 
 1. ~~`docs: add backend planning and concepts`~~ — done (user)
 2. ~~`backend: scaffold FastAPI app and dependencies`~~ — done (user)
-3. **`infra: add docker-compose for local Postgres`** — current slice
+3. **`infra: add docker-compose and Makefile for local dev`** — current slice
 4. `db: add Alembic, models, and initial migration`
 5. `api: add read-only dog endpoints and legacy serializer`
 6. `data: add JSON import script`
@@ -90,20 +92,15 @@ We commit in small vertical slices; user commits unless they ask the agent to.
 From **repo root** (Docker Desktop running):
 
 ```bash
-docker compose up -d
-docker compose ps
+make db-up    # Postgres → localhost:5432
+make dev      # API → http://localhost:8000/health
 ```
 
-From **`backend/`** (API):
-
-```bash
-source .venv/bin/activate
-uvicorn app.main:app --reload --port 8000
-```
+Stop DB: `make db-down`. List commands: `make help`.
 
 | URL | Works? |
 |-----|--------|
-| http://localhost:8000/health | Yes (when uvicorn is running) |
+| http://localhost:8000/health | Yes (when `make dev` is running) |
 | http://localhost:8000/docs | Yes (Swagger) |
 | http://localhost:8000/ | 404 (no route yet — expected) |
 | http://localhost:5432 | No — Postgres is not a web page |
@@ -148,12 +145,13 @@ uvicorn app.main:app --reload --port 8000
 | Path | Purpose |
 |------|---------|
 | `docker-compose.yml` | Postgres 16 Alpine; user/db `postgres`/`petsit`; port 5432; volume `petsit_pg_data`; healthcheck |
+| `Makefile` | `db-up`, `db-down`, `db-ps`, `dev`, `help` |
 
 **Updated:**
 
 | Path | Change |
 |------|--------|
-| `backend/README.md` | Docker + uvicorn setup; `/health` vs `/` and port 5432 |
+| `backend/README.md` | Quick start via `make`; manual compose/uvicorn fallback |
 | `backend/.env.example` | Filled default `DATABASE_URL` matching compose |
 | `docs/backend-planning.md` | Link to this log |
 
@@ -191,6 +189,22 @@ uvicorn app.main:app --reload --port 8000
 
 **Not in git (local only):** `backend/.venv/`, `backend/.env`
 
+### 2026-06-02 — Dev Makefile (checklist #2)
+
+**Added:** repo root `Makefile` — `help`, `db-up`, `db-down`, `db-ps`, `dev`.  
+`backend/Makefile` delegates to repo root (so `make dev` works from `backend/` too).
+
+**Updated:** `backend/README.md` — quick start via `make`.
+
+**Targets:**
+
+| Target | Action |
+|--------|--------|
+| `make db-up` | `docker compose up -d` |
+| `make db-down` | `docker compose down` |
+| `make db-ps` | `docker compose ps` |
+| `make dev` | `backend/.venv/bin/uvicorn` with reload on :8000 |
+
 ---
 
 ## How to verify each future step
@@ -198,8 +212,8 @@ uvicorn app.main:app --reload --port 8000
 ### Local DB + API (current stack)
 
 ```bash
-docker compose up -d && docker compose ps
-cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --port 8000
+make db-up && make db-ps
+make dev
 # http://localhost:8000/health
 ```
 
@@ -232,7 +246,6 @@ curl http://localhost:8000/api/dogs/odi
 - [ ] Pin dependency versions in `requirements.txt` for reproducible builds
 - [ ] `pip-audit` or Dependabot in CI
 - [ ] Root `.env.example` for Eleventy `API_URL`
-- [ ] Optional: Makefile or npm-style scripts for `docker compose` + uvicorn (reverted 2026-06-02)
 
 ---
 
@@ -243,5 +256,5 @@ curl http://localhost:8000/api/dogs/odi
 | 2026-06-02 | Scaffold verified; `/health` + `/docs` on :8000 |
 | 2026-06-02 | `docker compose up` — image pulled, `petsit-db` healthy on :5432 |
 | 2026-06-02 | Chose `restart: no` (no DB after reboot until `docker compose up -d`) |
-| 2026-06-02 | Makefile considered; reverted — use `docker compose` + `uvicorn` directly |
+| 2026-06-02 | Added `Makefile` — `make db-up` + `make dev` |
 | 2026-06-02 | **Next:** Alembic init + `DATABASE_URL` wiring in app |

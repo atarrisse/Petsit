@@ -5,56 +5,30 @@ FastAPI + PostgreSQL backend for Petsit.
 Canonical specification: [`docs/backend-planning.md`](../docs/backend-planning.md).  
 Progress log: [`docs/backend-implementation-log.md`](../docs/backend-implementation-log.md).
 
-## Setup (local)
+## Quick start (daily dev)
 
-### 1. Postgres (Docker)
-
-From the **repo root** (Docker Desktop running):
+From the **repo root** or **`backend/`** (Docker Desktop running, after one-time setup below):
 
 ```bash
-docker compose up -d
-docker compose ps
+make db-up    # Postgres
+make dev      # API → http://localhost:8000/health
 ```
 
-Default connection (matches `backend/.env.example`):
+Stop Postgres: `make db-down`. List commands: `make help`.
 
-```
-postgresql+psycopg2://postgres:postgres@localhost:5432/petsit
-```
-
-Copy env:
-
-```bash
-cp backend/.env.example backend/.env
-```
-
-Stop the database when done:
-
-```bash
-docker compose down
-```
-
-Data persists in the `petsit_pg_data` volume until you run `docker compose down -v`.
-
-### 2. Python app
+## One-time setup
 
 ```bash
 cd backend
 python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+.venv/bin/pip install -r requirements.txt
+cp .env.example .env
 ```
 
-Run the API (dev):
+Default `DATABASE_URL` (matches Docker Compose):
 
-```bash
-uvicorn app.main:app --reload --port 8000
 ```
-
-Or without activating the venv:
-
-```bash
-.venv/bin/uvicorn app.main:app --reload --port 8000
+postgresql+psycopg2://postgres:postgres@localhost:5432/petsit
 ```
 
 ## URLs
@@ -63,3 +37,21 @@ Or without activating the venv:
 - Docs: http://localhost:8000/docs
 
 (`http://localhost:8000/` returns 404 until more routes exist. Postgres on port 5432 is not a web page.)
+
+## Manual commands (without Make)
+
+Postgres (repo root):
+
+```bash
+docker compose up -d
+docker compose down
+```
+
+API (`backend/`):
+
+```bash
+source .venv/bin/activate
+uvicorn app.main:app --reload --port 8000
+```
+
+Or: `.venv/bin/uvicorn app.main:app --reload --port 8000`
