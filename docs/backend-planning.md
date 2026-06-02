@@ -4,6 +4,8 @@ This document is the **canonical backend specification** for Petsit: what we are
 
 If other docs or older notes disagree with this document, treat them as **outdated**.
 
+**Progress log:** see [`backend-implementation-log.md`](backend-implementation-log.md) for checklist, changelog, and verification steps.
+
 ---
 
 ## Goals
