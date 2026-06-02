@@ -19,11 +19,11 @@ Status key: `done` | `in_progress` | `pending` | `skipped`
 | 0 | Docs | Official spec [`backend-planning.md`](backend-planning.md) | done | User committed |
 | 0 | Docs | Remove outdated `backend-handoff.md`; planning is single source of truth | done | |
 | 0 | Docs | Concepts / metaphors [`backend-concepts.md`](backend-concepts.md) | done | |
-| 0 | Docs | This implementation log | done | You are here |
+| 0 | Docs | This implementation log | done | Updated each milestone |
 | 1 | Scaffold | `backend/` project (`requirements.txt`, `.env.example`, FastAPI app) | done | Verified 2026-06-02 |
 | 1 | Scaffold | `.gitignore` for `backend/.env`, `.venv`, Python caches | done | |
-| 2 | Local DB | `docker-compose.yml` for Postgres | pending | |
-| 3 | DB | Alembic init + `DATABASE_URL` wiring | pending | |
+| 2 | Local DB | `docker-compose.yml` for Postgres | done | Postgres 16, db `petsit`, `restart: no` |
+| 3 | DB | Alembic init + `DATABASE_URL` wiring | pending | **Next** |
 | 4 | DB | SQLAlchemy models (DDD tables) | pending | See planning doc |
 | 5 | DB | Initial Alembic migration | pending | |
 | 6 | API | `GET /api/dogs`, `GET /api/dogs/{slug}` (domain shape) | pending | |
@@ -46,6 +46,12 @@ Recorded here so we do not re-litigate during implementation.
 - **Backend**: FastAPI + PostgreSQL as source of truth.
 - **Build-time fetch**: Eleventy calls API when building (not runtime in browser).
 
+### Local infrastructure
+
+- **Postgres in Docker** via repo-root `docker-compose.yml` (not Homebrew Postgres).
+- **`restart: no`** on `db` — containers do **not** auto-start after Mac/Docker reboot; run `docker compose up -d` when coding.
+- **Docker Desktop** (or compatible engine) required on Mac for local Postgres.
+
 ### Data model (DDD)
 
 - Aggregate root: **Dog** with subdomains **Routine**, **Security**, **Behaviour**, **Health**.
@@ -62,20 +68,45 @@ Recorded here so we do not re-litigate during implementation.
 ### Environment files
 
 - **`backend/.env`** — secrets / `DATABASE_URL` (not committed).
-- **`backend/.env.example`** — template (committed).
+- **`backend/.env.example`** — template with default local Docker URL (committed).
 - Root `.env` optional later for Eleventy `API_URL` (not set up yet).
 
 ### Commits (suggested slices)
 
 We commit in small vertical slices; user commits unless they ask the agent to.
 
-1. `docs: add backend planning and concepts`
-2. `backend: scaffold FastAPI app and dependencies`
-3. `infra: add docker-compose for local Postgres`
-4. `db: add models and initial migration`
+1. ~~`docs: add backend planning and concepts`~~ — done (user)
+2. ~~`backend: scaffold FastAPI app and dependencies`~~ — done (user)
+3. **`infra: add docker-compose for local Postgres`** — current slice
+4. `db: add Alembic, models, and initial migration`
 5. `api: add read-only dog endpoints and legacy serializer`
 6. `data: add JSON import script`
 7. `build: wire Eleventy to legacy API`
+
+---
+
+## Daily dev cheat sheet
+
+From **repo root** (Docker Desktop running):
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+From **`backend/`** (API):
+
+```bash
+source .venv/bin/activate
+uvicorn app.main:app --reload --port 8000
+```
+
+| URL | Works? |
+|-----|--------|
+| http://localhost:8000/health | Yes (when uvicorn is running) |
+| http://localhost:8000/docs | Yes (Swagger) |
+| http://localhost:8000/ | 404 (no route yet — expected) |
+| http://localhost:5432 | No — Postgres is not a web page |
 
 ---
 
@@ -92,8 +123,9 @@ We commit in small vertical slices; user commits unless they ask the agent to.
 - Created [`backend-planning.md`](backend-planning.md) as official spec.
 - Deleted `docs/backend-handoff.md` (superseded).
 - Created [`backend-concepts.md`](backend-concepts.md) (ORM/SQLAlchemy/Alembic metaphors).
+- Created this implementation log.
 
-### 2026-06-02 — Backend scaffold (item 1)
+### 2026-06-02 — Backend scaffold (checklist #1)
 
 **Added:**
 
@@ -101,52 +133,80 @@ We commit in small vertical slices; user commits unless they ask the agent to.
 |------|---------|
 | `backend/README.md` | Setup and run instructions |
 | `backend/requirements.txt` | fastapi, uvicorn, sqlalchemy, alembic, psycopg2-binary, pydantic-settings, python-dotenv |
-| `backend/.env.example` | `DATABASE_URL` placeholder |
+| `backend/.env.example` | `DATABASE_URL` for local Docker |
 | `backend/app/__init__.py` | Package marker |
 | `backend/app/main.py` | FastAPI app + `GET /health` |
+
+**Updated:** `.gitignore` — `backend/.env`, `.venv`, Python caches.
+
+**Verified:** `GET /health` and `/docs` on port 8000.
+
+### 2026-06-02 — Local Postgres (checklist #2)
+
+**Added:**
+
+| Path | Purpose |
+|------|---------|
+| `docker-compose.yml` | Postgres 16 Alpine; user/db `postgres`/`petsit`; port 5432; volume `petsit_pg_data`; healthcheck |
 
 **Updated:**
 
 | Path | Change |
 |------|--------|
-| `.gitignore` | Ignore `backend/.env`, `backend/.venv`, Python caches, root `.venv` |
+| `backend/README.md` | Docker + uvicorn setup; `/health` vs `/` and port 5432 |
+| `backend/.env.example` | Filled default `DATABASE_URL` matching compose |
+| `docs/backend-planning.md` | Link to this log |
+
+**Compose choices recorded:**
+
+| Setting | Value | Why |
+|---------|-------|-----|
+| `image` | `postgres:16-alpine` | Pinned major version; small local image |
+| `container_name` | `petsit-db` | Easy to spot in `docker ps` |
+| `restart` | `no` | No auto-start after reboot — explicit `docker compose up -d` |
+| `environment` | `postgres` / `postgres` / `petsit` | Local-only; matches `DATABASE_URL` |
+| `ports` | `5432:5432` | Host `localhost:5432` for app tools |
+| `volumes` | `petsit_pg_data` | Data survives container recreate |
+| `healthcheck` | `pg_isready` | `docker compose ps` shows healthy |
 
 **Verified (local):**
 
 ```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+# repo root — requires Docker Desktop running
+docker compose up -d
+docker compose ps              # petsit-db Up (healthy)
+docker compose exec db psql -U postgres -d petsit -c 'SELECT 1'
+
+# backend/ — separate terminal
 uvicorn app.main:app --reload --port 8000
+# browser: http://localhost:8000/health → {"ok":true}
 ```
 
-- `GET http://localhost:8000/health` → `{"ok":true}` (200)
-- `GET http://localhost:8000/docs` → Swagger UI (200)
-- pip upgrade warning (old pip in venv) is harmless; optional: `python3 -m pip install --upgrade pip`
+**Troubleshooting notes (session):**
 
-**Not in git (local only):**
+- `Cannot connect to the Docker daemon` → start **Docker Desktop** first.
+- Run `docker compose` from **repo root** (where `docker-compose.yml` lives).
+- Browser on `:5432` will not show a site — use `:8000/health` for the API only.
+- `GET /` → 404 is expected until we add a root route.
 
-- `backend/.venv/` — virtual environment
-- `backend/.env` — copy from `.env.example` when Postgres is added
+**Not in git (local only):** `backend/.venv/`, `backend/.env`
 
 ---
 
 ## How to verify each future step
 
-### After docker-compose (item 2)
+### Local DB + API (current stack)
 
 ```bash
-docker compose up -d
-docker compose ps
-# optional: psql or GUI connect to localhost:5432
+docker compose up -d && docker compose ps
+cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --port 8000
+# http://localhost:8000/health
 ```
 
 ### After Alembic + migration (items 3–5)
 
 ```bash
-cd backend && source .venv/bin/activate
-alembic upgrade head
+cd backend && source .venv/bin/activate && alembic upgrade head
 # confirm tables exist in DB
 ```
 
@@ -160,7 +220,7 @@ curl http://localhost:8000/api/legacy/dogs
 ### After import script (item 8)
 
 ```bash
-python -m scripts.import_json   # exact command TBD when script exists
+cd backend && source .venv/bin/activate && python -m scripts.import_json   # exact module TBD
 curl http://localhost:8000/api/dogs/odi
 ```
 
@@ -172,14 +232,16 @@ curl http://localhost:8000/api/dogs/odi
 - [ ] Pin dependency versions in `requirements.txt` for reproducible builds
 - [ ] `pip-audit` or Dependabot in CI
 - [ ] Root `.env.example` for Eleventy `API_URL`
+- [ ] Optional: Makefile or npm-style scripts for `docker compose` + uvicorn (reverted 2026-06-02)
 
 ---
 
 ## Session notes
 
-_Use this section for quick notes during a work session (commands run, blockers, PR links)._
-
 | Date | Note |
 |------|------|
-| 2026-06-02 | Scaffold verified; uvicorn running on :8000 |
-| | Next up: `docker-compose.yml` + Postgres |
+| 2026-06-02 | Scaffold verified; `/health` + `/docs` on :8000 |
+| 2026-06-02 | `docker compose up` — image pulled, `petsit-db` healthy on :5432 |
+| 2026-06-02 | Chose `restart: no` (no DB after reboot until `docker compose up -d`) |
+| 2026-06-02 | Makefile considered; reverted — use `docker compose` + `uvicorn` directly |
+| 2026-06-02 | **Next:** Alembic init + `DATABASE_URL` wiring in app |
