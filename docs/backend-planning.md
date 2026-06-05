@@ -1,10 +1,12 @@
-# Backend planning (Petsit) — official spec
+# Backend planning (Petsit) — Phase 1 spec
 
-This document is the **canonical backend specification** for Petsit: what we are building, why, and the contracts between the static site, backend API, and database.
+This document is the **canonical Phase 1 backend specification** for Petsit: the dog-care schema, API contracts, and migration rules.
 
 If other docs or older notes disagree with this document, treat them as **outdated**.
 
-**Progress log:** see [`backend-implementation-log.md`](backend-implementation-log.md) for checklist, changelog, and verification steps.
+**Full project context (AIs / onboarding):** [`PROJECT-REFERENCE.md`](PROJECT-REFERENCE.md)  
+**Platform roadmap (Phases 2–5):** [`petsit-planning.md`](petsit-planning.md)  
+**Progress log:** [`backend-implementation-log.md`](backend-implementation-log.md)
 
 ---
 
@@ -14,10 +16,11 @@ If other docs or older notes disagree with this document, treat them as **outdat
 - Keep the public care sheets **static + printable** (Eleventy remains the public renderer).
 - Provide a clean path to an **admin UI** later (frontend) for editing dog profiles.
 - Use a pragmatic **Domain-Driven Design (DDD)** model so the backend stays understandable and extendable.
+- Platform expansion (multi-user, bookings, invoicing) is documented in [`petsit-planning.md`](petsit-planning.md). **This file remains the Phase 1 dog-care backend spec.**
 
-## Non-goals (for v1)
+## Non-goals (Phase 1 — dog backend migration)
 
-- User accounts / multi-tenant permissions.
+- Multi-user auth — Phase 2 (see [`petsit-planning.md`](petsit-planning.md) §3.3).
 - Real-time updates on the public site (the public site stays static; updates require a rebuild).
 - Perfect parsing of existing free-text feeding/bathroom strings (we will import best-effort and then edit in admin).
 
@@ -30,7 +33,7 @@ Public pages stay static; the backend serves JSON and owns Postgres.
 ```mermaid
 flowchart TB
   Eleventy["Eleventy (static site build)"] -->|"GET legacy dogs (build-time)"| API["FastAPI"]
-  AdminUI["Admin UI (later)"] -->|"CRUD domain API"| API
+  AdminUI["Admin / Client UI (Phase 5+)"] -->|"CRUD domain API"| API
   API --> Postgres["PostgreSQL"]
   Eleventy --> Site["_site/ → GitHub Pages"]
 ```
@@ -219,7 +222,5 @@ Static site CI will be configured to set `API_URL` during build so Eleventy can 
 
 ## Roadmap
 
-- **Phase 1**: DB schema + importer + read-only API (`GET /api/dogs`) + legacy serializer.
-- **Phase 2**: Eleventy uses backend at build-time.
-- **Phase 3**: Write endpoints + admin UI + auth.
-- **Phase 4**: Hosted backend + CI wiring + “publish” workflow.
+- **Phase 1 (this doc):** Dog schema + importer + read-only API (`GET /api/dogs`) + legacy serializer + Eleventy build-time fetch.
+- **Phases 2–5:** Auth, invite system, booking flow, invoicing, GraphQL + admin UI — full detail in [`petsit-planning.md §4`](petsit-planning.md).

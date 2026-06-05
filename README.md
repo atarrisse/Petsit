@@ -2,6 +2,8 @@
 
 Minimal static site generator that turns one JSON file per dog into a printable, A4-friendly care sheet.
 
+**Full documentation:** [`docs/PROJECT-REFERENCE.md`](docs/PROJECT-REFERENCE.md) (architecture, data, backend, tooling, AI context) · [`docs/petsit-planning.md`](docs/petsit-planning.md) (platform features & roadmap).
+
 ## Requirements
 
 - Node.js 18+ recommended

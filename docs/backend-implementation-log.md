@@ -2,11 +2,13 @@
 
 Living record of **what we planned**, **what we decided**, and **what we shipped** for the Python + PostgreSQL backend.
 
-| Document                                     | Role                                                     |
-| -------------------------------------------- | -------------------------------------------------------- |
-| [`backend-planning.md`](backend-planning.md) | **Canonical spec** — architecture, schema, API contracts |
-| [`backend-concepts.md`](backend-concepts.md) | Metaphors for FastAPI, SQLAlchemy, Alembic, etc.         |
-| **This file**                                | **Progress tracker + changelog** — update as we go       |
+| Document                                       | Role                                                        |
+| ---------------------------------------------- | ----------------------------------------------------------- |
+| [`PROJECT-REFERENCE.md`](PROJECT-REFERENCE.md) | **Master context** — full repo reference for humans & AIs   |
+| [`petsit-planning.md`](petsit-planning.md)     | **Platform roadmap** — auth, booking, invoicing, Phases 2–5 |
+| [`backend-planning.md`](backend-planning.md)   | **Phase 1 canonical spec** — dog schema, API contracts      |
+| [`backend-concepts.md`](backend-concepts.md)   | Metaphors for FastAPI, SQLAlchemy, Alembic, etc.            |
+| **This file**                                  | **Progress tracker + changelog** — update as we go          |
 
 ---
 
@@ -31,8 +33,8 @@ Status key: `done` | `in_progress` | `pending` | `skipped`
 | 7   | API      | `GET /api/legacy/dogs`, `GET /api/legacy/dogs/{slug}`                    | pending | Option A: separate paths                |
 | 8   | Data     | `backend/scripts/import_json.py`                                         | pending | Best-effort from `data/*.json`          |
 | 9   | Build    | Eleventy fetches legacy API at build time                                | pending | `API_URL` env                           |
-| 10  | Admin    | Write endpoints + auth                                                   | pending | Phase 3                                 |
-| 11  | Deploy   | Neon/Supabase + Railway/Render + CI `API_URL`                            | pending | Phase 4                                 |
+| 10  | Platform | Auth + roles + invite system (Phase 2 — see `petsit-planning.md`)        | pending | Auth0, families, users, invites         |
+| 11  | Platform | Booking flow + Google Calendar + invoicing (Phases 3–4)                  | pending | See `petsit-planning.md` §3–4           |
 
 ---
 
@@ -77,13 +79,38 @@ Recorded here so we do not re-litigate during implementation.
 
 We commit in small vertical slices; user commits unless they ask the agent to.
 
+**Phase 1 (dog backend):**
+
 1. ~~`docs: add backend planning and concepts`~~ — done (user)
 2. ~~`backend: scaffold FastAPI app and dependencies`~~ — done (user)
-3. **`infra: add docker-compose and Makefile for local dev`** — current slice
+3. ~~`infra: add docker-compose and Makefile for local dev`~~ — done (user)
 4. `db: add Alembic, models, and initial migration`
 5. `api: add read-only dog endpoints and legacy serializer`
 6. `data: add JSON import script`
 7. `build: wire Eleventy to legacy API`
+
+**Platform phases (Phases 2–5 — from `petsit-planning.md`):**
+
+8. `auth: Auth0 integration + user model`
+9. `auth: invite system + family model`
+10. `booking: data model + creation endpoint`
+11. `booking: day care vs boarding auto-detection`
+12. `booking: Google Calendar integration`
+13. `booking: confirmation email`
+14. `owner: read-only booking view`
+15. `invoicing: calculation logic + APScheduler`
+16. `invoicing: invoice email + DB record`
+
+### Platform phases (future — not current work)
+
+Full detail in [`petsit-planning.md`](petsit-planning.md). Summary:
+
+| Phase | Scope                          | Key new tables                 |
+| ----- | ------------------------------ | ------------------------------ |
+| **2** | Auth + roles                   | `users`, `families`, `invites` |
+| **3** | Booking flow + Google Calendar | `bookings`                     |
+| **4** | Invoicing + APScheduler        | `invoices`, `settings`         |
+| **5** | GraphQL + Admin UI             | (schema migration)             |
 
 ---
 
@@ -202,6 +229,23 @@ uvicorn app.main:app --reload --port 8000
 
 **Updated:** root `README.md` — note that `npm install` enables hooks. CI `format:check` unchanged.
 
+### 2026-06-05 — Docs synced with expanded platform vision
+
+**Context:** `docs/petsit-planning.md` introduced in a separate session. Expands Petsit from personal care-sheet tool to a petsitting business platform (multi-user, bookings, Google Calendar, invoicing, Auth0, GraphQL Phase 5+).
+
+**Phase 1 scope unchanged** — dog DDD schema remains the immediate next task (Alembic → models → migration → API → import → Eleventy).
+
+**Updated:**
+
+| Document                             | Change                                                                  |
+| ------------------------------------ | ----------------------------------------------------------------------- |
+| `docs/petsit-planning.md`            | Fixed Phase 1b (dogs only); added §0 doc map; Phase 2 note              |
+| `docs/PROJECT-REFERENCE.md`          | Expanded vision, 5-phase roadmap, platform decisions, external services |
+| `docs/backend-planning.md`           | Phase 1 framing, updated non-goals, roadmap links                       |
+| `docs/backend-implementation-log.md` | Doc link, platform phases section, extended commit slices               |
+| `README.md`                          | Added `petsit-planning.md` link                                         |
+| `backend/README.md`                  | Added platform roadmap link                                             |
+
 **Targets:**
 
 | Target         | Action                                           |
@@ -258,11 +302,13 @@ curl http://localhost:8000/api/dogs/odi
 
 ## Session notes
 
-| Date       | Note                                                                  |
-| ---------- | --------------------------------------------------------------------- |
-| 2026-06-02 | Scaffold verified; `/health` + `/docs` on :8000                       |
-| 2026-06-02 | `docker compose up` — image pulled, `petsit-db` healthy on :5432      |
-| 2026-06-02 | Chose `restart: no` (no DB after reboot until `docker compose up -d`) |
-| 2026-06-02 | Added `Makefile` — `make db-up` + `make dev`                          |
-| 2026-06-02 | Husky + lint-staged — Prettier on staged files at pre-commit          |
-| 2026-06-02 | **Next:** Alembic init + `DATABASE_URL` wiring in app                 |
+| Date       | Note                                                                         |
+| ---------- | ---------------------------------------------------------------------------- |
+| 2026-06-02 | Scaffold verified; `/health` + `/docs` on :8000                              |
+| 2026-06-02 | `docker compose up` — image pulled, `petsit-db` healthy on :5432             |
+| 2026-06-02 | Chose `restart: no` (no DB after reboot until `docker compose up -d`)        |
+| 2026-06-02 | Added `Makefile` — `make db-up` + `make dev`                                 |
+| 2026-06-02 | Husky + lint-staged — Prettier on staged files at pre-commit                 |
+| 2026-06-02 | Added `docs/PROJECT-REFERENCE.md` — master project doc for AIs               |
+| 2026-06-05 | Platform scope expanded — `petsit-planning.md` added; all docs synced        |
+| 2026-06-05 | **Next:** Alembic init + `DATABASE_URL` wiring in app (Phase 1a — unchanged) |
