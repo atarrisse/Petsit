@@ -4,7 +4,7 @@
 | ---------------- | ------------ |
 | **Owner**        | Ana Tarrisse |
 | **Status**       | Approved     |
-| **Last updated** | 2026-06-05   |
+| **Last updated** | 2026-06-07   |
 
 ## Summary
 
@@ -43,7 +43,7 @@ What the platform does — at a high level:
 2. **Owner invites** — Controlled access for dog owners
 3. **Bookings** — Day care and boarding stays I create and manage
 4. **Calendar and email** — Automatic events and confirmations on booking
-5. **Owner portal** — Read-only; starts as a dog list, then bookings, invoices, and care profiles
+5. **Owner portal** — Read-only; starts as a dog list with full profile, then bookings and invoices
 6. **Invoicing** — Scheduled monthly invoices with payment tracking
 
 _Behavioral detail for each area: [03-PRODUCT-REQUIREMENTS.md](03-PRODUCT-REQUIREMENTS.md) — Build order and availability per milestone: [02-ROADMAP.md](02-ROADMAP.md)_
@@ -63,9 +63,17 @@ _Behavioral detail for each area: [03-PRODUCT-REQUIREMENTS.md](03-PRODUCT-REQUIR
 
 ## Future considerations
 
-- **Per-client rate variations** — custom pricing per client as the business grows
 - **Activity logs** — record walks, feeding, bathroom breaks, and notes per stay
 - **Native mobile app and widgets** — quick-glance widgets for active stays; faster access on the go
 - **Care reports** — auto-generated end-of-stay or end-of-day summary sent to the owner
 - **Multi-language support** — launch is English-only, others to follow
 - **Third-party integrations** — e.g., Tractive GPS tracker data linked to a dog's profile
+
+---
+
+## Changelog
+
+### 2026-06-07
+
+- **Rate model scope moved to v1** — per-dog pricing, discounts, and client tenure pricing removed from Future Considerations; confirmed as M3 requirements after discovering global-only rates would require rework
+- **Owner portal M1 scope expanded** — full dog profile access moved from future expansion to M1; profile is built in M1 so no reason to defer owner visibility
