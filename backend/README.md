@@ -2,9 +2,11 @@
 
 FastAPI + PostgreSQL backend for Petsit.
 
-Canonical specification: [`docs/backend-planning.md`](../docs/backend-planning.md).  
-Progress log: [`docs/backend-implementation-log.md`](../docs/backend-implementation-log.md).  
-Platform roadmap (auth, bookings, invoicing): [`docs/petsit-planning.md`](../docs/petsit-planning.md).
+**Specification:** [`docs/product/03-PRODUCT-REQUIREMENTS.md`](../docs/product/03-PRODUCT-REQUIREMENTS.md)  
+**Build order:** [`docs/product/02-ROADMAP.md`](../docs/product/02-ROADMAP.md) (M1 → M4)  
+**Concept model:** [`docs/product/04-OOUX-OBJECT-MAP.md`](../docs/product/04-OOUX-OBJECT-MAP.md)
+
+Legacy backend planning docs: [`docs/archive/`](../docs/archive/README.md)
 
 ## Quick start (daily dev)
 

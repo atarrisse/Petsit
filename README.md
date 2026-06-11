@@ -1,12 +1,15 @@
-# Petsit printable care sheets (Eleventy)
+# Petsit
 
-Minimal static site generator that turns one JSON file per dog into a printable, A4-friendly care sheet.
+Petsitting business management platform — dog profiles, bookings, invoicing, and owner portal.
 
-**Full documentation:** [`docs/PROJECT-REFERENCE.md`](docs/PROJECT-REFERENCE.md) (architecture, data, backend, tooling, AI context) · [`docs/petsit-planning.md`](docs/petsit-planning.md) (platform features & roadmap).
+**Product docs:** [`docs/product/`](docs/product/README.md) (overview, roadmap, requirements)
+
+**Legacy (archived):** Printable care sheets via Eleventy (`npm run dev`) — superseded by the platform rebuild. Old planning docs are in [`docs/archive/`](docs/archive/README.md).
 
 ## Requirements
 
-- Node.js 18+ recommended
+- Node.js 18+ (Eleventy care sheets, tooling)
+- Python 3 + Docker (backend — see [`backend/README.md`](backend/README.md))
 
 ## Install
 
