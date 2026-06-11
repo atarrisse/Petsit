@@ -4,7 +4,7 @@
 | ---------------- | ------------ |
 | **Owner**        | Ana Tarrisse |
 | **Status**       | Approved     |
-| **Last updated** | 2026-06-07   |
+| **Last updated** | 2026-06-11   |
 
 ## Summary
 
@@ -41,7 +41,7 @@ What the platform does — at a high level:
 
 1. **Dogs and their families** — Centralized client and care records
 2. **Owner invites** — Controlled access for dog owners
-3. **Bookings** — Day care and boarding stays I create and manage
+3. **Bookings** — Full-day day care and boarding stays I create and manage
 4. **Calendar and email** — Automatic events and confirmations on booking
 5. **Owner portal** — Read-only; starts as a dog list with full profile, then bookings and invoices
 6. **Invoicing** — Scheduled monthly invoices with payment tracking
@@ -72,6 +72,12 @@ _Behavioral detail for each area: [03-PRODUCT-REQUIREMENTS.md](03-PRODUCT-REQUIR
 ---
 
 ## Changelog
+
+### 2026-06-11
+
+- **Half-day day care deprecated** — day care is full-day only; no half-day duration option on bookings or in the rate model
+- **Group flat price removed** — multi-dog and special-rate adjustments use booking-level discount only (see PRD §6.2)
+- **Invoicing rules clarified** — cross-month stays split by calendar month; in-progress stays billable through invoice date; invoiced bookings cannot be cancelled (void and reissue instead)
 
 ### 2026-06-07
 

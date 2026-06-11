@@ -1,0 +1,50 @@
+flowchart TB
+  DOG["🐶 Dog<br/>hero object"]
+
+  subgraph PROFILE["Care profile — section groupings"]
+    direction TB
+
+    subgraph IDENTITY["Identity"]
+      ID_FIELDS["name · breed · gender · size · DOB<br/>energy · vaccinated · neutered · house-trained · insurance · contact_details"]
+    end
+
+    subgraph ROUTINE["Routine"]
+      R_FIELDS["treats · exercise"]
+      FEEDING["feeding[]"]
+      BATHROOM["bathroom[]"]
+    end
+
+    subgraph BEHAVIOUR["Behaviour"]
+      B_FIELDS["enjoys · struggles · commands · notes"]
+    end
+
+    subgraph HEALTH["Health"]
+      H_FIELDS["conditions · trauma · veterinarian · emergency contact"]
+      MEDICATION["medication[]"]
+    end
+
+    subgraph SECURITY["Security"]
+      S_FIELDS["microchipped · microchip · has_tracker · tracker_id · tracker_consent"]
+    end
+  end
+
+  FAMILY["Family<br/>name · email · phone · address"]
+  BOOKING["Booking<br/>drop-off · pick-up · service"]
+  EMERGENCY["Emergency contact<br/>name · phone"]
+
+  DOG --- PROFILE
+  DOG -.->|"has"| EMERGENCY
+  FAMILY -->|"has many"| DOG
+  FAMILY -.->|"shortcut: pre-fill & bulk-update"| EMERGENCY
+  DOG -->|"included in"| BOOKING
+  FAMILY -->|"billed to"| BOOKING
+
+  classDef hero fill:#fef3c7,stroke:#d97706,stroke-width:2px
+  classDef grouping fill:#e0f2fe,stroke:#0284c7
+  classDef fields fill:#f0fdf4,stroke:#16a34a
+  classDef context fill:#f3f4f6,stroke:#6b7280
+
+  class DOG hero
+  class IDENTITY,ROUTINE,BEHAVIOUR,HEALTH,SECURITY grouping
+  class ID_FIELDS,R_FIELDS,B_FIELDS,H_FIELDS,S_FIELDS,FEEDING,BATHROOM,MEDICATION fields
+  class FAMILY,BOOKING,EMERGENCY context

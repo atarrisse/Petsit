@@ -1,0 +1,8 @@
+erDiagram
+  FAMILY ||--o{ DOG : has
+  DOG ||--o{ FEEDING_ENTRY : ""
+  DOG ||--o{ BATHROOM_ENTRY : ""
+  DOG ||--o{ MEDICATION : ""
+  DOG ||--o| EMERGENCY_CONTACT : has
+  DOG }o--o{ BOOKING : included_in
+  FAMILY ||--o{ BOOKING : billed_to

@@ -4,7 +4,7 @@
 | ---------------- | ------------ |
 | **Owner**        | Ana Tarrisse |
 | **Status**       | Approved     |
-| **Last updated** | 2026-06-07   |
+| **Last updated** | 2026-06-11   |
 
 ## Milestones
 
@@ -15,8 +15,8 @@
 **Includes:**
 
 - Authentication (petsitter and owner roles)
-- Owner invites (shipped with auth)
-- Dog CRUD
+- Owner invites — email invite primary, shareable family-scoped link secondary
+- Dog CRUD — petsitter creates directly, or via owner intake form link
 - Family CRUD
 - Link dogs to families
 - Full dog profile (Identity, Routine, Behaviour, Health, Security)
@@ -56,7 +56,7 @@
 
 **Includes:**
 
-- Rate model — global defaults with per-dog overrides, discounts, client tenure pricing, and group pricing
+- Rate model — day care and boarding global defaults with per-dog overrides and booking-level discounts
 - Generate invoices manually
 - Payment tracking
 - Owner portal — current month balance and invoice history
@@ -113,3 +113,21 @@ Each milestone should be usable on its own before starting the next.
 | Bookings              | M2                        |
 | Invoicing             | M3                        |
 | Calendar and email    | M4                        |
+
+---
+
+## Changelog
+
+### 2026-06-11
+
+- **Group flat price removed** — multi-dog and special-rate adjustments use booking-level discount only
+- **Billing period rules** — invoice month determined by scheduled pick-up for completed stays; cross-month stays split by calendar month; in-progress stays included at month end for their portion
+- **Half-day day care deprecated** — M2 bookings and M3 rates use full-day day care only
+
+### 2026-06-10
+
+- Moved invite emails from M4 workflow automation to M1 owner access; M1 now includes email invites as the primary invite method and shareable family-scoped links as the secondary method.
+
+### 2026-06-08
+
+- Clarified that day-before reminder emails are sent the morning of the day before drop-off, not exactly 24 hours before.
