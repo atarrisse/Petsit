@@ -52,10 +52,11 @@
 
 ### M3 — Statements
 
-**Goal:** Monthly statements in the app.
+**Goal:** Statements in the app — `Monthly` or `Per booking` per family.
 
 **Includes:**
 
+- Family billing mode — `Monthly` or `Per booking` (default `Per booking`); per-booking prompt after eligible stays
 - Rate model — day care and boarding global defaults with per-dog overrides and booking-level discounts
 - Send statements manually — email listing bookings and total due
 - Payment tracking per booking (mark paid individually or all on a statement)
@@ -63,7 +64,7 @@
 
 **Done when:**
 
-- You send a real month's statement using the app
+- You send a real statement using the app (`Monthly` or `Per booking`)
 - Per-dog rates and overrides are applied correctly
 - Payment status is tracked per booking in the app
 - Owners can see outstanding balance and payment status in the portal
@@ -77,16 +78,16 @@
 **Includes:**
 
 - Confirmation email to owners on booking create and changes
-- Day-before reminder email
-- Scheduled end-of-month statement draft
+- Day-before reminder email (per booking — petsitter opts in; default off)
+- Scheduled end-of-month statement draft (`Monthly` families only)
 - Integration with petsitter's Google Calendar
 
 **Done when:**
 
 - A new booking creates a Google Calendar event and sends a confirmation email automatically
 - Booking changes and cancellations update the Google Calendar event and trigger an update email
-- A day-before reminder fires without manual steps
-- Statements are drafted automatically at month end and sent after your review
+- A day-before reminder fires for bookings where the petsitter enabled it
+- Statements are drafted automatically at month end for `Monthly` families and sent after your review
 
 ---
 
@@ -120,7 +121,9 @@ Each milestone should be usable on its own before starting the next.
 
 ### 2026-06-12
 
-- **M3 renamed Statements** — statements replace invoices; payment per booking (see PRD §6)
+- **Day-before reminder opt-in** — petsitter enables per booking (default off); see [PRD §3.2](03-PRODUCT-REQUIREMENTS.md#32-booking-inputs) and [§4.3.4](03-PRODUCT-REQUIREMENTS.md#434-day-before-reminder)
+- **Billing mode** — `Monthly` or `Per booking` per family (default `Per booking`); M4 month-end draft applies to `Monthly` families only (see [PRD §6.1](03-PRODUCT-REQUIREMENTS.md#61-billing-mode))
+- **M3 renamed Statements** — statements replace invoices; payment per booking (see [PRD §6](03-PRODUCT-REQUIREMENTS.md#6-statements))
 - **Unified terminology** — "Statement" everywhere (no separate "billing" label)
 
 ### 2026-06-11

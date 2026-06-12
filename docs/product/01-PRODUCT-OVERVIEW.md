@@ -33,7 +33,7 @@ Dog and client information is scattered across Google Calendar, WhatsApp, spread
 
 One account per family (all their dogs visible). No open sign-up. Solo operator only.
 
-_Detailed access and permission rules: [03-PRODUCT-REQUIREMENTS.md §2](03-PRODUCT-REQUIREMENTS.md)_
+_Detailed access and permission rules: [§2 — Access and invites](03-PRODUCT-REQUIREMENTS.md#2-access-and-invites)_
 
 ## Core capabilities
 
@@ -44,7 +44,7 @@ What the platform does — at a high level:
 3. **Bookings** — Full-day day care and boarding stays I create and manage
 4. **Calendar and email** — Automatic events and confirmations on booking
 5. **Owner portal** — Read-only; starts as a dog list with full profile, then bookings and payment status
-6. **Statements** — Monthly email listing bookings and total due; payment tracked per booking
+6. **Statements** — Monthly or combined billing for regular clients, so they don’t pay after every stay.
 
 _Behavioral detail for each area: [03-PRODUCT-REQUIREMENTS.md](03-PRODUCT-REQUIREMENTS.md) — Build order and availability per milestone: [02-ROADMAP.md](02-ROADMAP.md)_
 
@@ -75,14 +75,15 @@ _Behavioral detail for each area: [03-PRODUCT-REQUIREMENTS.md](03-PRODUCT-REQUIR
 
 ### 2026-06-12
 
-- **Statement model** — statements replace invoices; payment per booking (see PRD §6)
+- **Billing mode** — `Monthly` or `Per booking` per family (default `Per booking`); see [PRD §6.1](03-PRODUCT-REQUIREMENTS.md#61-billing-mode)
+- **Statement model** — statements replace invoices; payment per booking (see [PRD §6](03-PRODUCT-REQUIREMENTS.md#6-statements))
 - **Statement month = drop-off month** — whole booking on one statement; no cross-month split; `In progress` and `Completed` both eligible
 - **Unified terminology** — "Statement" everywhere (no separate "billing" label)
 
 ### 2026-06-11
 
 - **Half-day day care deprecated** — day care is full-day only; no half-day duration option on bookings or in the rate model
-- **Group flat price removed** — multi-dog and special-rate adjustments use booking-level discount only (see PRD §6.2)
+- **Group flat price removed** — multi-dog and special-rate adjustments use booking-level discount only (see [PRD §6.2](03-PRODUCT-REQUIREMENTS.md#62-rates))
 - **Invoicing rules clarified** — cross-month stays split by calendar month; in-progress stays billable through invoice date; invoiced bookings cannot be cancelled (void and reissue instead)
 
 ### 2026-06-07

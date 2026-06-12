@@ -1,7 +1,14 @@
 # Concept model — Dog profile
 
-**Parent docs:** [03-PRODUCT-REQUIREMENTS.md §1](03-PRODUCT-REQUIREMENTS.md) · [01-PRODUCT-OVERVIEW.md](01-PRODUCT-OVERVIEW.md)  
-**Last updated:** 2026-06-12
+|                  |              |
+| ---------------- | ------------ |
+| **Owner**        | Ana Tarrisse |
+| **Status**       | Needs review |
+| **Last updated** | 2026-06-12   |
+
+_Owner has not yet validated this model against the PRD._
+
+**Parent docs:** [§1 — Dogs and families](03-PRODUCT-REQUIREMENTS.md#1-dogs-and-families) · [01-PRODUCT-OVERVIEW.md](01-PRODUCT-OVERVIEW.md)
 
 A **concept model** shows the objects in the product and how they relate. It is not a database schema — it describes what information exists before implementation decisions.
 
@@ -34,7 +41,7 @@ _Source: [`ooux-diagram.mmd`](ooux-diagram.mmd)_
 
 ## Profile section groupings
 
-These are **not separate objects**. They are how care information is organized on a dog's profile (matches Requirements §1.1).
+These are **not separate objects**. They are how care information is organized on a dog's profile (matches [§1.1](03-PRODUCT-REQUIREMENTS.md#11-dog-profiles)).
 
 ### Identity
 
@@ -117,7 +124,7 @@ These are **not separate objects**. They are how care information is organized o
 
 ### Items to bring (per-dog override)
 
-Optional per service type. Used in day-before reminder emails when set; otherwise falls back to petsitter baseline (see Requirements §4.3.4). **Petsitter-only** — not on owner intake form.
+Optional per service type. Used in [day-before reminder](03-PRODUCT-REQUIREMENTS.md#434-day-before-reminder) emails when set; otherwise falls back to petsitter baseline. **Petsitter-only** — not on owner intake form.
 
 | Field                   | Type | Notes                                        |
 | ----------------------- | ---- | -------------------------------------------- |
@@ -126,7 +133,7 @@ Optional per service type. Used in day-before reminder emails when set; otherwis
 
 ### Emergency contact (related object)
 
-Stored on each dog. The family profile offers a **shortcut** to pre-fill new dogs and bulk-update existing dogs (see Requirements §1.2).
+Stored on each dog. The [family profile](03-PRODUCT-REQUIREMENTS.md#12-families) offers a **shortcut** to pre-fill new dogs and bulk-update existing dogs.
 
 | Field | Type   |
 | ----- | ------ |
@@ -135,29 +142,31 @@ Stored on each dog. The family profile offers a **shortcut** to pre-fill new dog
 
 ### Family (related object)
 
-| Field   | Type   |
-| ------- | ------ |
-| name    | string |
-| email   | string |
-| phone   | string |
-| address | string |
+| Field        | Type   | Notes                                                                                                      |
+| ------------ | ------ | ---------------------------------------------------------------------------------------------------------- |
+| name         | string |                                                                                                            |
+| email        | string |                                                                                                            |
+| phone        | string |                                                                                                            |
+| address      | string |                                                                                                            |
+| billing_mode | string | `monthly` or `per_booking`; default `per_booking`. See [§6.1](03-PRODUCT-REQUIREMENTS.md#61-billing-mode). |
 
 ### Booking (related object)
 
-| Field          | Type      | Notes                              |
-| -------------- | --------- | ---------------------------------- |
-| drop_off       | datetime  |                                    |
-| pick_up        | datetime  |                                    |
-| service_type   | string    |                                    |
-| status         | string    |                                    |
-| discount_type  | string    | `percentage` or `fixed` — optional |
-| discount_value | decimal   | Optional                           |
-| payment_status | string    | `unpaid` or `paid` (§6.5)          |
-| statement      | Statement | Optional — set when sent (§6.4)    |
+| Field                    | Type        | Notes                                                                                                                             |
+| ------------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| drop_off                 | datetime    |                                                                                                                                   |
+| pick_up                  | datetime    |                                                                                                                                   |
+| service_type             | string      |                                                                                                                                   |
+| status                   | string      |                                                                                                                                   |
+| discount_type            | string      | `percentage` or `fixed` — optional                                                                                                |
+| discount_value           | decimal     | Optional                                                                                                                          |
+| send_day_before_reminder | boolean     | Default `false`; petsitter opts in per booking — see [§3.2](03-PRODUCT-REQUIREMENTS.md#32-booking-inputs)                         |
+| payment_status           | string      | `unpaid` or `paid` — see [§6.5](03-PRODUCT-REQUIREMENTS.md#65-payment)                                                            |
+| statements               | Statement[] | Bookings may appear on multiple sent statements while unpaid — see [§6.3.1](03-PRODUCT-REQUIREMENTS.md#631-statement-month-rules) |
 
 ### Statement (related object)
 
-Groups bookings included in one statement email to a family for a statement month. Not a formal invoice — a send record with a total snapshot (§6.4).
+Groups bookings included in one statement email to a family for a statement month. Not a formal invoice — a send record with a total snapshot.
 
 | Field           | Type      | Notes                                |
 | --------------- | --------- | ------------------------------------ |
@@ -173,21 +182,21 @@ Groups bookings included in one statement email to a family for a statement mont
 
 Configured once in app settings. Not part of the dog profile.
 
-| Field                   | Type | Notes                                        |
-| ----------------------- | ---- | -------------------------------------------- |
-| items_to_bring_day_care | text | Default list for day care reminders (§4.3.4) |
-| items_to_bring_boarding | text | Default list for boarding reminders (§4.3.4) |
+| Field                   | Type | Notes                               |
+| ----------------------- | ---- | ----------------------------------- |
+| items_to_bring_day_care | text | Default list for day care reminders |
+| items_to_bring_boarding | text | Default list for boarding reminders |
 
 ---
 
-## Requirements §1.1 → structure
+## [§1.1](03-PRODUCT-REQUIREMENTS.md#11-dog-profiles) → structure
 
-| Requirements §1.1 | In this model                                                      |
-| ----------------- | ------------------------------------------------------------------ |
-| Identity          | Fields on `Dog`                                                    |
-| Routine           | Section grouping — fields + feeding/bathroom entries               |
-| Behaviour         | Section grouping — fields on profile                               |
-| Health            | Section grouping — fields + medication entries + emergency contact |
-| Security          | Section grouping — fields on profile                               |
-| Emergency contact | Related object on dog; family shortcut in §1.2                     |
-| Items to bring    | Per-dog override fields; baseline in petsitter settings (§4.3.4)   |
+| §1.1 section      | In this model                                                              |
+| ----------------- | -------------------------------------------------------------------------- |
+| Identity          | Fields on `Dog`                                                            |
+| Routine           | Section grouping — fields + feeding/bathroom entries                       |
+| Behaviour         | Section grouping — fields on profile                                       |
+| Health            | Section grouping — fields + medication entries + emergency contact         |
+| Security          | Section grouping — fields on profile                                       |
+| Emergency contact | Related object on dog; family shortcut on [Family](#family-related-object) |
+| Items to bring    | Per-dog override fields; baseline in petsitter settings                    |
