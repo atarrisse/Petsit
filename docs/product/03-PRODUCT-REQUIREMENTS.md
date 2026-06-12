@@ -4,7 +4,7 @@
 | ---------------- | ------------ |
 | **Owner**        | Ana Tarrisse |
 | **Status**       | Approved     |
-| **Last updated** | 2026-06-11   |
+| **Last updated** | 2026-06-12   |
 
 ## 0. About this document
 
@@ -55,12 +55,12 @@ A family has one or more dogs. Each dog may have its own contact details, which 
 
 **Emergency contact shortcut:** Emergency contact is stored on each dog (§1.1). The family profile also offers a shortcut: when the petsitter sets emergency contact there, it **pre-fills** new dogs and **bulk-updates** all existing dogs in the family.
 
-| Field   | Definition                                                    |
-| ------- | ------------------------------------------------------------- |
-| Name    | The household or client name                                  |
-| Email   | Primary contact; used for portal invites and invoice delivery |
-| Phone   | Contact number                                                |
-| Address | Home address                                                  |
+| Field   | Definition                                                      |
+| ------- | --------------------------------------------------------------- |
+| Name    | The household or client name                                    |
+| Email   | Primary contact; used for portal invites and statement delivery |
+| Phone   | Contact number                                                  |
+| Address | Home address                                                    |
 
 **Acceptance criteria**
 
@@ -190,11 +190,11 @@ Feature-specific behavior (e.g. dog list scope in §1.3) applies these roles per
 | Dog intake form link sent | Invitation to submit a dog      | Owner     |
 | Dog intake form submitted | Dog created confirmation        | Petsitter |
 
-- Booking confirmations, booking update/cancellation emails, reminders, and invoice delivery are part of **M4 workflow automation**
+- Booking confirmations, booking update/cancellation emails, reminders, and statement delivery are part of **M4 workflow automation**
 - Invites expire after **30 days**
 - If invite expires unused: **notify petsitter**; petsitter manually triggers a new invite
 - Petsitter can **revoke** owner access after they have accepted
-- Revoke **unlinks** the owner from the family — portal access removed; family data (dogs, bookings, invoices) unchanged
+- Revoke **unlinks** the owner from the family — portal access removed; family data (dogs, bookings, statements) unchanged
 - Petsitter can **re-invite** at any time (same flow as above); re-invited owner sees all household dogs, including intake-created dogs (§1.4)
 
 **Acceptance criteria**
@@ -327,14 +327,13 @@ Transitions are **manual**, triggered by the petsitter:
 
 **Cancelling**
 
-- Petsitter can cancel a booking at any time before or during the stay — **unless the booking has already been invoiced** (see below)
+- Petsitter can cancel a booking while it is **`Upcoming` or `In progress`**
 - Calendar event is removed _(M4)_
-- Petsitter chooses whether to charge the cancelled booking; that choice is stored on the booking and used automatically when invoicing _(M3)_ — no second decision at invoice time
+- Petsitter chooses whether to charge the cancelled booking; that choice is stored on the booking and used automatically on statements _(M3)_
 
-**Invoiced bookings cannot be cancelled**
+**`Completed` bookings cannot be cancelled**
 
-- A booking is **invoiced** once any portion of it appears on a non-void invoice (§6.3)
-- Invoiced bookings cannot be cancelled — correct billing errors via void and reissue (§6.6) instead
+- Once a booking is **`Completed`**, cancellation is blocked — correct errors by editing the booking and resending the statement (§6.6)
 
 **Overlapping bookings**
 
@@ -354,17 +353,17 @@ Transitions are **manual**, triggered by the petsitter:
 
 **AC-3.5.2 — Cancel booking**
 
-- **Given** A booking is `Upcoming` or `In progress` and has not been invoiced
+- **Given** A booking is `Upcoming` or `In progress`
 - **When** Petsitter cancels the booking
 - **Then** Status becomes `Cancelled`
 
-**AC-3.5.4 — Cannot cancel invoiced booking**
+**AC-3.5.4 — Cannot cancel completed booking**
 
-- **Given** Any portion of a booking appears on a non-void invoice
+- **Given** A booking is `Completed`
 - **When** Petsitter attempts to cancel the booking
 - **Then** Cancellation is blocked
 
-**AC-3.5.3 — Cancellation billing decision**
+**AC-3.5.3 — Cancellation charge decision**
 
 _Chargeable_
 
@@ -382,13 +381,14 @@ _Not chargeable_
 
 A dog's profile includes a bookings section visible to both petsitter and owner.
 
-| Field        | Shown | Milestone |
-| ------------ | ----- | --------- |
-| Status       | Yes   | M2        |
-| Drop-off     | Yes   | M2        |
-| Pick-up      | Yes   | M2        |
-| Service type | Yes   | M2        |
-| Price        | Yes   | M3        |
+| Field          | Shown | Milestone |
+| -------------- | ----- | --------- |
+| Status         | Yes   | M2        |
+| Drop-off       | Yes   | M2        |
+| Pick-up        | Yes   | M2        |
+| Service type   | Yes   | M2        |
+| Price          | Yes   | M3        |
+| Payment status | Yes   | M3        |
 
 - Price is shown from **M3** onward (once the rate model exists); not shown in M2
 
@@ -410,7 +410,7 @@ Automates **petsitter calendar sync** and **owner emails** in response to bookin
 | Booking updated     | Update event       | Update notification (§4.3.2) | On change to dates, times, or status |
 | Booking cancelled   | Remove event       | Cancellation (§4.3.3)        | On cancel                            |
 | Day before drop-off | —                  | Reminder (§4.3.4)            | Morning of the day before drop-off   |
-| End of month        | —                  | Invoice (§6.1)               | After petsitter review and approval  |
+| End of month        | —                  | Statement (§6.1)             | After petsitter review and approval  |
 
 ### 4.2 Petsitter calendar sync
 
@@ -459,9 +459,19 @@ The reminder uses the per-dog override if one exists; otherwise falls back to th
 
 - Per-dog overrides are **petsitter-only** — not collected on the owner intake form (§1.4)
 
+#### 4.3.5 Statement
+
+_Sent when the petsitter sends a statement (§6.4) or approves an M4 draft (§6.1)._
+
+- Dog name
+- Statement month
+- Itemised list of included bookings — separate line per dog per booking,
+- Discount if set (§6.4)
+- **Total due** for all bookings on the statement
+
 ### 4.4 Failure handling
 
-The booking is always valid and fully usable regardless of automation outcome. Automation failure never blocks the petsitter from editing, cancelling, or invoicing a booking.
+The booking is always valid and fully usable regardless of automation outcome. Automation failure never blocks the petsitter from editing, cancelling, or sending a statement for a booking.
 
 | Failure            | Behavior                                                  |
 | ------------------ | --------------------------------------------------------- |
@@ -476,7 +486,7 @@ When retries are exhausted: petsitter is notified and handles the communication 
 
 - **Given** A booking exists
 - **When** Calendar or email automation fails
-- **Then** The booking remains fully editable, cancellable, and invoiceable by the petsitter
+- **Then** The booking remains fully editable, cancellable (while `Upcoming` or `In progress`), and eligible for statements by the petsitter
 
 **AC-4.4.2 — Automation retry and notification**
 
@@ -498,7 +508,7 @@ _Email fails_
 
 ## 5. Owner portal
 
-Read-only access for dog owners to their family's data. Rolled out incrementally across [M1](02-ROADMAP.md#m1--dogs-and-families), [M2](02-ROADMAP.md#m2--bookings), and [M3](02-ROADMAP.md#m3--invoicing). Access model: §2.2. Invites: §2.3.
+Read-only access for dog owners to their family's data. Rolled out incrementally across [M1](02-ROADMAP.md#m1--dogs-and-families), [M2](02-ROADMAP.md#m2--bookings), and [M3](02-ROADMAP.md#m3--statements). Access model: §2.2. Invites: §2.3.
 
 ### 5.1 Portal overview
 
@@ -506,7 +516,7 @@ Read-only access for dog owners to their family's data. Rolled out incrementally
 | --------- | ------------------- | ------ |
 | **M1**    | Dogs                | §5.3   |
 | **M2**    | Bookings            | §5.4   |
-| **M3**    | Invoices            | §5.5   |
+| **M3**    | Statements          | §5.5   |
 
 ### 5.2 Access and constraints
 
@@ -545,38 +555,40 @@ _Available from [M2](02-ROADMAP.md#m2--bookings)._
 
 - Bookings section — same fields and display rules as petsitter view (§3.6)
 
-### 5.5 Invoices _(M3)_
+### 5.5 Statements _(M3)_
 
-_Available from [M3](02-ROADMAP.md#m3--invoicing)._
+_Available from [M3](02-ROADMAP.md#m3--statements)._
 
 **Dashboard**
 
-- **Current month balance** _(M3)_ — three figures:
-  - **Running total** — billable amount for the current calendar month per §6.3 (completed stays, chargeable cancellations, and in-progress portions through month end)
-  - **Forecast total** — upcoming bookings whose **scheduled pick-up** falls in the current calendar month (full stay amount)
+- **Outstanding balance** — total of all unpaid bookings for the household
+- **Current month** _(optional breakdown)_ — three figures:
+  - **Running total** — unpaid eligible bookings (§6.3) whose scheduled drop-off falls in the current calendar month
+  - **Forecast total** — upcoming bookings whose scheduled drop-off falls in the current calendar month (full stay amount)
   - **Estimated total** — running + forecast
-- Invoice history
+- **Statement history** — sent statements (statement month, date sent, total due)
+- Bookings show **payment status** (unpaid / paid)
 
-Invoices also arrive by email _(M4)_ — see §4.1 and §6.1.
+Statements may also arrive by email _(M4 automated send, or M3 manual send)_ — see §4.3.5 and §6.1.
 
-## 6. Invoicing
+## 6. Statements
 
-_Milestones: [M3 — Invoicing](02-ROADMAP.md#m3--invoicing), [M4 — Workflow automation](02-ROADMAP.md#m4--workflow-automation)_
+_Milestones: [M3 — Statements](02-ROADMAP.md#m3--statements), [M4 — Workflow automation](02-ROADMAP.md#m4--workflow-automation)_
 
-Monthly billing for completed stays and in-progress stays. One invoice per family. Owner visibility: §5.5. Cancellation chargeability: §3.5.
+Monthly **statements** — an email listing what a family owes for a statement month. Payment is tracked **per booking**, not on a formal invoice document. Owner visibility: §5.5. Cancellation chargeability: §3.5.
 
 ### 6.1 Schedule
 
-**M3 — manual invoicing**
+**M3 — manual statements**
 
-- Petsitter generates invoices manually
-- Owners view invoices in the portal (§5.5)
+- Petsitter sends statements manually (§6.4)
+- Owners view payment status and statement history in the portal (§5.5)
 
-**M4 — automated invoicing** _(builds on M3)_
+**M4 — automated statements** _(builds on M3)_
 
-- System drafts invoice automatically at end of each month
-- Petsitter reviews and approves before the invoice is sent
-- Approved invoice is emailed to the owner (§4.1), in addition to portal access
+- System drafts a statement automatically at end of each month (one per family with eligible bookings)
+- Petsitter reviews and approves before the statement email is sent
+- Approved statement is emailed to the owner (§4.3.5), in addition to portal visibility
 
 ### 6.2 Rates
 
@@ -595,9 +607,7 @@ Each booking is priced per dog and service type. Petsitter sets a **global defau
 | Day care | Per dog (full-day only)                                                           |
 | Boarding | Per night, per dog — one overnight between drop-off and pick-up dates = one night |
 
-Billing uses **dates only** — times are not used for price calculation. Actual drop-off/pick-up timestamps (§3.2) are operational records only.
-
-**Partial-month stays** — when a stay spans calendar months, each invoice includes only the days (day care) or nights (boarding) falling in that month, using the same date rules below.
+Pricing uses **dates only** — times are not used for price calculation. Actual drop-off/pick-up timestamps (§3.2) are operational records only. Which statement a booking appears on: §6.3.1.
 
 **Boarding night count** — calendar dates only: nights = number of calendar days from drop-off date to pick-up date (when pick-up is after drop-off day).
 
@@ -635,122 +645,148 @@ _Percentage_
 - **When** The booking is priced
 - **Then** The booking total is €90
 
-### 6.3 Billing rules
+### 6.3 Which bookings go on a statement
 
-Which bookings appear on a monthly invoice:
+Which bookings are eligible when sending a statement (rules: §6.3.1):
 
-| Booking status              | Included? | Notes                                                                                   |
-| --------------------------- | --------- | --------------------------------------------------------------------------------------- |
-| `Completed`                 | Yes       | Full stay if within one month; otherwise remaining uninvoiced portion (§6.3.1)          |
-| `In progress`               | Yes       | Uninvoiced portion through invoice generation date (§6.3.1)                             |
-| `Cancelled`, chargeable     | Yes       | Billing month = month of **scheduled pick-up**; chargeability set at cancel time (§3.5) |
-| `Cancelled`, not chargeable | No        |                                                                                         |
-| `Upcoming`                  | No        | Stay has not started                                                                    |
+| Booking status              | Included? |
+| --------------------------- | --------- |
+| `Completed`                 | Yes       |
+| `In progress`               | Yes       |
+| `Cancelled`, chargeable     | Yes       |
+| `Cancelled`, not chargeable | No        |
+| `Upcoming`                  | No        |
 
-#### 6.3.1 Billing period rules
+Only **unpaid** bookings are included. Paid bookings are never on a new statement.
 
-- **Billing month** — the calendar month being invoiced
-- **Invoice generation date** — the date the petsitter generates the invoice (M3) or approves the draft (M4); caps how much of an in-progress stay is included on that invoice
-- **`Completed` bookings** — included on the invoice for the month of **scheduled pick-up**. If part of the stay was already invoiced while `In progress`, only the **remaining** uninvoiced days/nights are billed
-- **`In progress` bookings** — included for the uninvoiced portion from **scheduled drop-off** (or the day after the last invoiced day) through **min(invoice generation date, last day of billing month)** (dates only, per §6.2). Example: drop-off 10 Jan, pick-up 20 Jan, invoice generated 15 Jan → first invoice includes 10–15 Jan; a later January invoice includes 16–20 Jan only if still in progress, or the remainder on completion
-- **Cross-month stays** — when a stay spans calendar months, each invoice includes only the days/nights falling in that billing month (within the uninvoiced range above). Example: drop-off 28 Jan, pick-up 2 Feb, invoice generated 31 Jan → January invoice includes 3 boarding nights (28–31 Jan); February invoice includes the remaining 2 nights when the booking completes
-- **`Upcoming`** — never on an invoice
-- **Already invoiced** — once any portion of a booking is on a non-void invoice, that booking cannot be cancelled (§3.5); further invoices include only the uninvoiced remainder
-- **Chargeable cancellations** — included on the invoice for the month of their scheduled pick-up date, at the full booking amount (no partial-month split)
+#### 6.3.1 Statement month rules
+
+- **Statement month** — the calendar month of **scheduled drop-off** (when the stay starts)
+- **One statement per family per statement month** — at most one statement per family for a given statement month; sending again **resends** the same statement (updated totals if bookings changed)
+- **One statement per booking** — each booking appears on at most one statement: the drop-off month's statement, for the **full stay** (all days/nights per §6.2). Bookings are not split across calendar months — cross-month stays are billed in full on drop-off month (e.g. drop-off 28 Jan, pick-up 2 Feb → all 5 boarding nights on January's statement)
+- **`Completed` and `In progress` bookings** — included when the petsitter sends the drop-off month's statement
+- **`Upcoming`** — never on a statement
+- **Chargeable cancellations** — included for the month of their scheduled drop-off date, at the full booking amount
 
 **Acceptance criteria**
 
 **AC-6.3.1 — Bill completed stays**
 
-- **Given** A booking is `Completed` and scheduled pick-up falls in the billing month
-- **When** Petsitter generates that month's invoice
-- **Then** The booking is included on the invoice
+- **Given** A booking is `Completed`, scheduled drop-off falls in the statement month, and the booking is unpaid
+- **When** Petsitter sends that month's statement for the family
+- **Then** The booking is included for the full stay
 
 **AC-6.3.2 — Bill chargeable cancellations**
 
 _Chargeable_
 
-- **Given** A cancelled booking marked chargeable whose scheduled pick-up falls in the billing month
-- **When** Petsitter generates that month's invoice
-- **Then** The booking is included on the invoice
+- **Given** A cancelled booking marked chargeable whose scheduled drop-off falls in the statement month and is unpaid
+- **When** Petsitter sends that month's statement for the family
+- **Then** The booking is included for the full booking amount
 
 _Not chargeable_
 
 - **Given** A cancelled booking marked not chargeable
-- **When** Petsitter generates that month's invoice
-- **Then** The booking is excluded from the invoice
+- **When** Petsitter sends a statement for that statement month
+- **Then** The booking is excluded
 
-**AC-6.3.3 — Cross-month stay**
+**AC-6.3.3 — In progress at month end**
 
-_In progress at month end_
+- **Given** A boarding booking with drop-off 28 Jan and pick-up 2 Feb is `In progress` on 31 Jan and is unpaid
+- **When** Petsitter sends the January statement on 31 Jan
+- **Then** The booking is included for all 5 nights on the January statement (not split to February)
 
-- **Given** A boarding booking with drop-off 28 Jan and pick-up 2 Feb is `In progress` on 31 Jan
-- **When** Petsitter generates the January invoice on 31 Jan
-- **Then** The booking is included for 3 nights (28–31 Jan)
+**AC-6.3.4 — Cross-month stay when completed**
 
-_Mid-month manual invoice_
+- **Given** A boarding booking with drop-off 28 Jan and pick-up 2 Feb is `Completed` and unpaid
+- **When** Petsitter sends the January statement
+- **Then** The booking is included for all 5 nights on the January statement (not split to February)
 
-- **Given** A boarding booking with drop-off 10 Jan and pick-up 20 Jan is `In progress` on 15 Jan and has not been invoiced
-- **When** Petsitter generates the January invoice on 15 Jan
-- **Then** The booking is included for 6 nights (10–15 Jan)
+### 6.4 Statements
 
-_Remainder on completion_
+A **statement** records that the petsitter emailed a family about a set of bookings for a statement month. It is not a formal invoice document — it groups bookings and snapshots the total sent.
 
-- **Given** The same booking is `Completed` with pick-up 2 Feb and January already billed 3 nights
-- **When** Petsitter generates the February invoice
-- **Then** The booking is included for the remaining 2 nights (1–2 Feb)
+| Field           | Definition                                         |
+| --------------- | -------------------------------------------------- |
+| Family          | Client household                                   |
+| Statement month | Calendar month of scheduled drop-off (§6.3.1)      |
+| Bookings        | Unpaid eligible bookings included when sent (§6.3) |
+| Total due       | Sum of included booking totals at send time        |
+| Sent at         | When the statement email was sent                  |
 
-### 6.4 Invoice format
+**Send statement** (manual — M3, or approve draft — M4):
+
+1. Petsitter selects a family and statement month (defaults to current month)
+2. App lists eligible unpaid bookings (§6.3)
+3. Petsitter clicks **Send statement** → email sent (§4.3.5) → statement created or updated (resend)
+4. Included bookings are linked to the statement
+
+**Statement email content** (§4.3.5):
 
 - Itemised per booking
-- **Separate line per dog** — each line shows the dog's rate for the days or nights billed on **this invoice** (§6.2, §6.3.1)
+- **Separate line per dog** — each line shows the dog's rate for the full stay (§6.2)
 - **Discount** — if the booking has a discount (§6.2), one discount line per booking after dog line items
+- **Total due** for all bookings on the statement
 
 **Acceptance criteria**
 
 **AC-6.4.1 — Separate line per dog**
 
-- **Given** An invoice includes a booking with multiple dogs
-- **When** The invoice is generated
+- **Given** A statement includes a booking with multiple dogs
+- **When** The statement email is sent
 - **Then** Each dog has its own line item for that booking
 
-**AC-6.4.2 — Booking discount on invoice**
+**AC-6.4.2 — Booking discount on statement**
 
 - **Given** A booking has a discount applied after line items
-- **When** The invoice is generated
-- **Then** The invoice shows one discount line for that booking reflecting the agreed reduction
+- **When** The statement email is sent
+- **Then** The email shows one discount line for that booking reflecting the agreed reduction
+
+**AC-6.4.3 — One statement per family per month**
+
+- **Given** A statement was already sent for Smith family for January 2026
+- **When** Petsitter sends the January statement again
+- **Then** The same statement is updated and the email is resent (bookings and total reflect current data)
 
 ### 6.5 Payment
 
 - Families pay **outside the app** (e.g. bank transfer)
-- Petsitter marks invoices as **paid** in the app
+- Each booking has **payment status**: `unpaid` or `paid`
+- Petsitter marks bookings **paid** individually, or **marks all bookings on a statement paid** in one action
 - In-app payment processing: out of scope
 
 **Acceptance criteria**
 
-**AC-6.5.1 — Mark invoice paid**
+**AC-6.5.1 — Mark booking paid**
 
-- **Given** An invoice exists with status unpaid
+- **Given** An unpaid booking exists
 - **When** Petsitter marks it as paid
-- **Then** The invoice shows as paid in the app and in the owner portal (§5.5)
+- **Then** The booking shows as paid in the app and in the owner portal (§5.5)
+
+**AC-6.5.2 — Mark all on statement paid**
+
+- **Given** A statement has multiple unpaid bookings
+- **When** Petsitter marks all bookings on that statement as paid
+- **Then** Every included booking shows as paid in the app and in the owner portal
 
 ### 6.6 Corrections
 
-- Petsitter can **void and reissue** a corrected invoice
-- Voiding marks the original invoice as void; it remains visible in history but is excluded from balance calculations
-- Reissue creates a new invoice for the same billing period with corrected line items
-
-**Acceptance criteria**
-
-**AC-6.6.1 — Void and reissue**
-
-- **Given** An invoice has been sent to the owner
-- **When** Petsitter voids it and reissues a corrected invoice for the same billing period
-- **Then**
-  - The original invoice shows as void and is excluded from the current balance
-  - A new invoice replaces it with corrected amounts
-  - The owner sees both in invoice history; the voided invoice is clearly marked
+- Fix incorrect amounts by **editing the booking** (allowed until the booking is paid)
+- **Resend the statement** for that statement month to email the owner updated totals (§6.4)
+- No void/reissue workflow — statements are send records, not editable documents
 
 ## 7. Out of scope (v1)
 
 See [01-PRODUCT-OVERVIEW.md § Out of scope](01-PRODUCT-OVERVIEW.md).
+
+---
+
+## Changelog
+
+### 2026-06-12
+
+- **Statement model** — no invoice entity; statements group bookings and trigger statement emails; payment tracked per booking
+- **Statement month = drop-off month** — whole booking on drop-off month's statement; no cross-month split; `In progress` and `Completed` both eligible
+- **Unified terminology** — "Statement" everywhere (no separate "billing" label)
+- **Cancel by status** — bookings cancellable while `Upcoming` or `In progress` only; `Completed` bookings cannot be cancelled
+- **Care profiles in-app only** — printable care sheets and PDF export confirmed out of scope

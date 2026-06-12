@@ -11,7 +11,7 @@
 
 The platform needs a web UI for three surfaces, all delivered from **one codebase**:
 
-- **Petsitter app** — families, dogs, invites, bookings, invoicing; delivered across milestones (see [Roadmap](../../product/02-ROADMAP.md))
+- **Petsitter app** — families, dogs, invites, bookings, statements; delivered across milestones (see [Roadmap](../../product/02-ROADMAP.md))
 - **Owner portal** — read-only views; same app as petsitter, separated by role-based routing (scope per [PRD §5](../../product/03-PRODUCT-REQUIREMENTS.md#5-owner-portal))
 - **Public pages** — token-gated forms (no login); URL tokens validated server-side
 

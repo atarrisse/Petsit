@@ -4,25 +4,25 @@
 | ---------------- | ------------ |
 | **Owner**        | Ana Tarrisse |
 | **Status**       | Approved     |
-| **Last updated** | 2026-06-11   |
+| **Last updated** | 2026-06-12   |
 
 ## Summary
 
 A custom tool to manage my petsitting activities and centralize information.
 
-One platform for dog care profiles, bookings, and invoicing — replacing Google Calendar, WhatsApp, spreadsheets, and scattered notes. Dog owners receive an invitation from me — no open sign-up — and get read-only access to their information.
+One platform for dog care profiles, bookings, and statements — replacing Google Calendar, WhatsApp, spreadsheets, and scattered notes. Dog owners receive an invitation from me — no open sign-up — and get read-only access to their information.
 
 Not a marketplace. Not built to scale. This is a single-operator tool for my specific workflow, not a SaaS product for others.
 
 ## Problem
 
-Dog and client information is scattered across Google Calendar, WhatsApp, spreadsheets, and ad-hoc notes. There is no single place for care data and client records. In practice this means: wrong care instructions during a stay, invoices built manually from memory, and owners messaging me for information I've already recorded somewhere else.
+Dog and client information is scattered across Google Calendar, WhatsApp, spreadsheets, and ad-hoc notes. There is no single place for care data and client records. In practice this means: wrong care instructions during a stay, statements built manually from memory, and owners messaging me for information I've already recorded somewhere else.
 
 ## Vision
 
-**For me:** One source of truth for dogs, clients, bookings, and invoices. Repetitive tasks — billing, confirmations, reports — run automatically. I focus on the dogs.
+**For me:** One source of truth for dogs, clients, bookings, and payment status. Repetitive tasks — statements, confirmations, reports — run automatically. I focus on the dogs.
 
-**For dog owners:** A clear window into their dog's care — profile, stays, and invoices available whenever they need them, without having to ask.
+**For dog owners:** A clear window into their dog's care — profile, stays, and what they owe — available whenever they need them, without having to ask.
 
 ## Users
 
@@ -43,15 +43,15 @@ What the platform does — at a high level:
 2. **Owner invites** — Controlled access for dog owners
 3. **Bookings** — Full-day day care and boarding stays I create and manage
 4. **Calendar and email** — Automatic events and confirmations on booking
-5. **Owner portal** — Read-only; starts as a dog list with full profile, then bookings and invoices
-6. **Invoicing** — Scheduled monthly invoices with payment tracking
+5. **Owner portal** — Read-only; starts as a dog list with full profile, then bookings and payment status
+6. **Statements** — Monthly email listing bookings and total due; payment tracked per booking
 
 _Behavioral detail for each area: [03-PRODUCT-REQUIREMENTS.md](03-PRODUCT-REQUIREMENTS.md) — Build order and availability per milestone: [02-ROADMAP.md](02-ROADMAP.md)_
 
 ## Success criteria
 
-1. All information in one place — dogs, families, care data, bookings, invoices — accessible to me and visible to owners without going through WhatsApp
-2. Booking and invoicing processes are automated
+1. All information in one place — dogs, families, care data, bookings, and payment status — accessible to me and visible to owners without going through WhatsApp
+2. Booking and statement processes are automated
 
 **First useful release (M1):** Dogs, families, and owner access (dog list) centralized — addresses primary pain. [Build order →](02-ROADMAP.md)
 
@@ -72,6 +72,12 @@ _Behavioral detail for each area: [03-PRODUCT-REQUIREMENTS.md](03-PRODUCT-REQUIR
 ---
 
 ## Changelog
+
+### 2026-06-12
+
+- **Statement model** — statements replace invoices; payment per booking (see PRD §6)
+- **Statement month = drop-off month** — whole booking on one statement; no cross-month split; `In progress` and `Completed` both eligible
+- **Unified terminology** — "Statement" everywhere (no separate "billing" label)
 
 ### 2026-06-11
 

@@ -1,7 +1,7 @@
 # Concept model — Dog profile
 
 **Parent docs:** [03-PRODUCT-REQUIREMENTS.md §1](03-PRODUCT-REQUIREMENTS.md) · [01-PRODUCT-OVERVIEW.md](01-PRODUCT-OVERVIEW.md)  
-**Last updated:** 2026-06-11
+**Last updated:** 2026-06-12
 
 A **concept model** shows the objects in the product and how they relate. It is not a database schema — it describes what information exists before implementation decisions.
 
@@ -144,14 +144,28 @@ Stored on each dog. The family profile offers a **shortcut** to pre-fill new dog
 
 ### Booking (related object)
 
-| Field          | Type     |
-| -------------- | -------- | ---------------------------------- |
-| drop_off       | datetime |
-| pick_up        | datetime |
-| service_type   | string   |
-| status         | string   |
-| discount_type  | string   | `percentage` or `fixed` — optional |
-| discount_value | decimal  | Optional                           |
+| Field          | Type      | Notes                              |
+| -------------- | --------- | ---------------------------------- |
+| drop_off       | datetime  |                                    |
+| pick_up        | datetime  |                                    |
+| service_type   | string    |                                    |
+| status         | string    |                                    |
+| discount_type  | string    | `percentage` or `fixed` — optional |
+| discount_value | decimal   | Optional                           |
+| payment_status | string    | `unpaid` or `paid` (§6.5)          |
+| statement      | Statement | Optional — set when sent (§6.4)    |
+
+### Statement (related object)
+
+Groups bookings included in one statement email to a family for a statement month. Not a formal invoice — a send record with a total snapshot (§6.4).
+
+| Field           | Type      | Notes                                |
+| --------------- | --------- | ------------------------------------ |
+| family          | Family    |                                      |
+| statement_month | date      | Calendar month of scheduled drop-off |
+| total_due       | decimal   | Snapshot at send time                |
+| sent_at         | datetime  | When the statement email was sent    |
+| bookings        | Booking[] | Unpaid eligible bookings included    |
 
 ---
 
