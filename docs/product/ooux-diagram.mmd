@@ -1,8 +1,14 @@
 erDiagram
   FAMILY ||--o{ DOG : has
+  FAMILY ||--o| OWNER_ACCOUNT : has
+  FAMILY ||--o{ PORTAL_INVITE : has
+  FAMILY ||--o{ INTAKE_LINK : has
+  FAMILY ||--o{ BOOKING : billed_to
+  FAMILY ||--o{ STATEMENT : receives
   DOG ||--o{ FEEDING_ENTRY : ""
   DOG ||--o{ BATHROOM_ENTRY : ""
   DOG ||--o{ MEDICATION : ""
   DOG ||--o| EMERGENCY_CONTACT : has
   DOG }o--o{ BOOKING : included_in
-  FAMILY ||--o{ BOOKING : billed_to
+  BOOKING ||--o| CALENDAR_EVENT : syncs_to
+  STATEMENT }o--o{ BOOKING : includes

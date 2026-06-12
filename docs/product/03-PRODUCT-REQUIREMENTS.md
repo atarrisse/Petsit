@@ -14,12 +14,12 @@
 
 **Related docs.**
 
-| Doc                                              | Use when                                               |
-| ------------------------------------------------ | ------------------------------------------------------ |
-| [01-PRODUCT-OVERVIEW.md](01-PRODUCT-OVERVIEW.md) | Problem, vision, users, success criteria, out of scope |
-| [02-ROADMAP.md](02-ROADMAP.md)                   | Build order and milestone "done when"                  |
-| [04-OOUX-OBJECT-MAP.md](04-OOUX-OBJECT-MAP.md)   | Dog profile field-level structure                      |
-| [Z-DISCOVERY.md](Z-DISCOVERY.md)                 | Tracing where a requirement came from                  |
+| Doc                                              | Use when                                                 |
+| ------------------------------------------------ | -------------------------------------------------------- |
+| [01-PRODUCT-OVERVIEW.md](01-PRODUCT-OVERVIEW.md) | Problem, vision, users, success criteria, out of scope   |
+| [02-ROADMAP.md](02-ROADMAP.md)                   | Build order and milestone "done when"                    |
+| [04-OOUX-OBJECT-MAP.md](04-OOUX-OBJECT-MAP.md)   | Full product concept model — field-level source of truth |
+| [Z-DISCOVERY.md](Z-DISCOVERY.md)                 | Tracing where a requirement came from                    |
 
 **Success.** A feature is complete when it satisfies the requirements in this doc for its milestone and meets the [success criteria in the Product Overview](01-PRODUCT-OVERVIEW.md#success-criteria).
 
@@ -31,7 +31,7 @@ _Milestone: [M1 — Dogs and families](02-ROADMAP.md#m1--dogs-and-families)_
 
 Dogs are the central care entity — each dog has a full care profile. Dogs are grouped into **families** (client households), one family per household.
 
-**Concept model:** [04-OOUX-OBJECT-MAP.md](04-OOUX-OBJECT-MAP.md) — includes diagram (see overview below)
+**Concept model:** [04-OOUX-OBJECT-MAP.md](04-OOUX-OBJECT-MAP.md) — dogs, families, bookings, statements, access, and M4 workflow objects (see overview below)
 
 ![Dog profile concept model](dog-profile-overview.svg)
 
@@ -39,19 +39,19 @@ Dogs are the central care entity — each dog has a full care profile. Dogs are 
 
 Each dog has a full care profile at launch. **Identity, Routine, Behaviour, Health, and Security are section groupings** — they organize information on the profile; they are not separate objects the dog owns.
 
-| Area          | Requirement                                                                                                                                                                                                                                                |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Identity**  | Captures enough basic information for the petsitter to understand who the dog is and what general care expectations apply, including name, breed, gender, size, age/DOB, energy level, vaccination status, neutered status, house-training, and insurance. |
-| **Routine**   | Documents the dog's daily care routine so feeding, bathroom breaks, treats, and exercise can stay consistent during stays.                                                                                                                                 |
-| **Behaviour** | Describes the dog's temperament, likes, struggles, known commands, and care notes that help the petsitter avoid stress or unsafe situations.                                                                                                               |
-| **Health**    | Records health information needed for safe care and emergency readiness, including conditions, trauma history, veterinarian details, medication instructions, and **emergency contact** (name and phone) stored on each dog.                               |
-| **Security**  | Documents microchip and tracker information, including any owner GPS tracker and consent for the petsitter to attach her own tracker during stays.                                                                                                         |
+| Area          | Requirement                                                                                                                                                                                                                                                                                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Identity**  | Captures enough basic information for the petsitter to understand who the dog is and what general care expectations apply, including name, breed, gender, size, age/DOB, energy level, vaccination status, neutered status, house-training, and insurance. Fixed scales for gender, size, and energy — see [OOUX — Identity](04-OOUX-OBJECT-MAP.md#identity). |
+| **Routine**   | Documents the dog's daily care routine so feeding, bathroom breaks, treats, and exercise can stay consistent during stays.                                                                                                                                                                                                                                    |
+| **Behaviour** | Describes the dog's temperament, likes, struggles, known commands, and care notes that help the petsitter avoid stress or unsafe situations.                                                                                                                                                                                                                  |
+| **Health**    | Records health information needed for safe care and emergency readiness, including conditions, trauma history, veterinarian details, medication instructions, and **emergency contact** (name and phone) stored on each dog.                                                                                                                                  |
+| **Security**  | Documents microchip and tracker information, including any owner GPS tracker and consent for the petsitter to attach her own tracker during stays.                                                                                                                                                                                                            |
 
 ### 1.2 Families
 
 A **family** groups the dogs under one household — one bill, one owner account.
 
-A family has one or more dogs. Each dog may have its own contact details, which override the family-level contact for that dog.
+A family has one or more dogs. Each dog has its own **emergency contact**; the family profile shortcut pre-fills or bulk-updates it — see [Emergency contact](#emergency-contact-related-object) in the [concept model](04-OOUX-OBJECT-MAP.md#emergency-contact-related-object).
 
 **Emergency contact shortcut:** Emergency contact is stored on each dog. The family profile also offers a shortcut: when the petsitter sets emergency contact there, it **pre-fills** new dogs and **bulk-updates** all existing dogs in the family.
 
@@ -167,6 +167,8 @@ _Manual copy_
 ## 2. Access and invites
 
 _Milestone: [M1 — Dogs and families](02-ROADMAP.md#m1--dogs-and-families)_
+
+**Concept model:** [Owner account](04-OOUX-OBJECT-MAP.md#owner-account-related-object), [Portal invite](04-OOUX-OBJECT-MAP.md#portal-invite-related-object), [Intake link](04-OOUX-OBJECT-MAP.md#intake-link-related-object)
 
 ### 2.1 Registration
 
@@ -345,7 +347,7 @@ Transitions are **manual**, triggered by the petsitter:
 
 - Petsitter can cancel any booking at any point.
 - Calendar event is removed _(M4)_
-- Petsitter chooses whether to charge the cancelled booking; that choice is stored on the booking and used automatically on statements _(M3)_
+- **Chargeable defaults to true** when cancelling; petsitter may mark the booking **not chargeable** to exclude it from statements _(M3)_ — see [OOUX — Booking](04-OOUX-OBJECT-MAP.md#booking-related-object)
 - If the booking was already on a sent statement, flag it to petsitter ([§6.6](#66-corrections))
 - Prepaid bookings cancelled as not chargeable keep their `paid` status; any refund is handled outside the app ([§6.5](#65-payment))
 
@@ -387,16 +389,16 @@ Transitions are **manual**, triggered by the petsitter:
 
 **AC-3.5.3 — Cancellation charge decision**
 
-_Chargeable_
+_Default chargeable_
 
 - **Given** Petsitter is cancelling a booking
-- **When** Petsitter marks the booking as chargeable
+- **When** Petsitter confirms cancel without marking not chargeable
 - **Then** The chargeable flag is stored as true on the booking
 
 _Not chargeable_
 
 - **Given** Petsitter is cancelling a booking
-- **When** Petsitter marks the booking as not chargeable
+- **When** Petsitter marks the booking as not chargeable and confirms cancel
 - **Then** The chargeable flag is stored as false on the booking
 
 ### 3.6 Bookings on dog profile
@@ -413,6 +415,7 @@ A dog's profile includes a bookings section visible to both petsitter and owner.
 | Payment status | Yes   | M3        |
 
 - Price is shown from **M3** onward (once the rate model exists); not shown in M2
+- Price is calculated from rates and discount ([§6.2](#62-rates)) — not entered directly; see [OOUX — Price](04-OOUX-OBJECT-MAP.md#booking-related-object)
 
 - All bookings are shown (upcoming and past)
 - Upcoming bookings are shown expanded; past bookings are collapsed by default
@@ -436,14 +439,14 @@ Automates **petsitter calendar sync** and **owner emails** in response to bookin
 
 ### 4.2 Petsitter calendar sync
 
-Syncs booking events to the petsitter's Google Calendar — create, update, and remove per the automation overview above.
+Syncs booking events to the petsitter's Google Calendar — create, update, and remove per the automation overview above. See [OOUX — Calendar event](04-OOUX-OBJECT-MAP.md#calendar-event-related-object).
 
 - Event spans drop-off to pick-up
 - Event title: `🐶 {dog name}: {service type}`
 
 ### 4.3 Owner emails
 
-All owner emails go to the family email on file. Content specs below.
+All owner emails go to the family email on file. Content specs below. Send records: [OOUX — Email](04-OOUX-OBJECT-MAP.md#email-related-object).
 
 #### 4.3.1 Booking confirmation
 
@@ -643,7 +646,7 @@ Each family has a **`Billing mode`** (default `Per booking`).
 For families with `Billing mode = Per booking`, the app prompts the petsitter when a booking becomes chargeable:
 
 - **Complete booking** — petsitter taps "End booking" ([§3.4](#34-booking-lifecycle))
-- **Chargeable cancellation** — petsitter cancels and marks the booking chargeable ([§3.5](#35-edit-and-cancel))
+- **Chargeable cancellation** — petsitter cancels a booking (chargeable by default; not chargeable only if petsitter opts out — [§3.5](#35-edit-and-cancel))
 
 **Prompt options:**
 
@@ -786,11 +789,12 @@ All bookings matching the current Start–End are selected. Petsitter may switch
 
 **Eligible booking** — per [§6.3](#63-which-bookings-go-on-a-statement): unpaid; `Completed`, `Ongoing`, or chargeable `Cancelled`; not `Upcoming`.
 
+**On send** — when petsitter clicks **Send statement** or **Approve**, **Start** and **End** update to match the included bookings: earliest scheduled drop-off → latest scheduled pick-up. The sent statement period (portal and email) uses these dates.
+
 **Send** requires at least one included booking. See [§6.4](#64-statements).
 
 Shared rules:
 
-- **Statement period** (display) — **Start date** through **End date** on the sent statement (portal and email)
 - **Full stay per inclusion** — each included booking is billed for the **full stay** (all days/nights per rate rules). Bookings are not split across calendar months (e.g. drop-off 28 Jan, pick-up 2 Feb → all 5 boarding nights)
 - **Open tab** — while **unpaid**, a booking may appear on multiple statements
 
@@ -832,25 +836,38 @@ Shared rules:
 - **When** Petsitter sets **Start** 1 Jan and **End** 31 Jan
 - **Then** The booking is not in the list and cannot be selected
 
+**AC-6.3.7 — Send updates Start and End to booking span**
+
+- **Given** Petsitter composes a statement with **Start** 1 Jan and **End** 20 Jan (today) and one included booking with scheduled drop-off 15 Jan and pick-up 18 Jan
+- **When** Petsitter clicks **Send statement**
+- **Then** The sent statement has **Start** 15 Jan and **End** 18 Jan
+
+**AC-6.3.8 — Send updates span for multiple bookings**
+
+- **Given** Petsitter bulk-selects two included bookings: drop-off 5 Jan / pick-up 6 Jan, and drop-off 15 Jan / pick-up 18 Jan
+- **When** Petsitter clicks **Send statement**
+- **Then** The sent statement has **Start** 5 Jan and **End** 18 Jan
+
 ### 6.4 Statements
 
 A **statement** records that the petsitter emailed a family about a set of bookings. It is not a formal invoice document — it groups bookings and snapshots the total sent.
 
-| Field            | Definition                                                               |
-| ---------------- | ------------------------------------------------------------------------ |
-| Family           | Client household                                                         |
-| Start date       | Earliest included scheduled drop-off — from date range or bulk selection |
-| End date         | Latest included scheduled pick-up — from date range or bulk selection    |
-| Statement period | Same as Start → End on the sent statement (shown in portal and email)    |
-| Bookings         | Unpaid eligible bookings included when sent                              |
-| Total due        | Sum of included booking totals at send time                              |
-| Sent at          | When the statement email was sent                                        |
+| Field            | Definition                                                                                            |
+| ---------------- | ----------------------------------------------------------------------------------------------------- |
+| Family           | Client household                                                                                      |
+| Status           | `draft` or `sent`                                                                                     |
+| Start date       | While composing: from date range or bulk selection. **On send:** earliest included scheduled drop-off |
+| End date         | While composing: from date range or bulk selection. **On send:** latest included scheduled pick-up    |
+| Statement period | Start → End on the sent statement (shown in portal and email)                                         |
+| Bookings         | Unpaid eligible bookings included when sent                                                           |
+| Total due        | Sum of included booking totals at send time                                                           |
+| Sent at          | When the statement email was sent                                                                     |
 
 **Send statement** — one-off (M3, or M4 after approval):
 
 1. Petsitter opens the statement form for a family (or from a per-booking prompt — [§6.1.2](#612-per-booking-prompt))
 2. Petsitter composes the statement using **date range** and/or **bulk select** ([§6.3.1](#631-statement-form--two-input-modes))
-3. Petsitter clicks **Send statement** → email sent → statement created
+3. Petsitter clicks **Send statement** → **Start** and **End** update to the included bookings' date span → email sent → statement created
 4. Included bookings are linked to the statement
 
 **M4 month-end draft (`Monthly` families only):**
@@ -917,7 +934,7 @@ A **statement** records that the petsitter emailed a family about a set of booki
 ### 6.6 Corrections
 
 - Fix incorrect amounts by **editing the booking** (allowed until the booking is paid)
-- Remove a booking that should not count by **cancelling** it ([§3.5](#35-edit-and-cancel)) — same chargeable / not chargeable choice
+- Remove a booking that should not count by **cancelling** it ([§3.5](#35-edit-and-cancel)) — chargeable by default; mark not chargeable to exclude
 - **Resend the statement** to email the owner updated totals — reopen the form (same or adjusted **Start**/**End**) or resend from statement history
 - No void/reissue workflow — statements are send records, not editable documents
 
@@ -937,12 +954,13 @@ See [01-PRODUCT-OVERVIEW.md — Out of scope](01-PRODUCT-OVERVIEW.md#out-of-scop
 - **Statement model** — no invoice entity; statements group bookings and trigger statement emails; payment tracked per booking
 - **Statement month = drop-off month** — **`Monthly` families only**; whole booking on one statement; no cross-month split; `Ongoing` and `Completed` both eligible. Not stored or shown for **`Per booking`** families. _Superseded — see Statement period._
 - **Statement period** — earliest included scheduled drop-off date through latest included scheduled pick-up date; shown on every statement (both billing modes)
+- **Send updates statement period** — on send, **Start** and **End** snap to earliest included drop-off and latest included pick-up across included bookings (AC-6.3.7, AC-6.3.8)
 - **Running total = open tab** — includes all unpaid eligible bookings for the family, even if already on a prior sent statement; bookings may appear on multiple statements while unpaid
 - **Unified terminology** — "Statement" everywhere (no separate "billing" label)
 
 **Bookings**
 
-- **Cancel** — petsitter can cancel any booking at any point (`Upcoming`, `Ongoing`, or `Completed`, paid or unpaid); chargeable / not chargeable choice; prepaid cancelled as not chargeable keeps `paid` status — refunds outside the app (no `refunded` status in v1)
+- **Cancel** — petsitter can cancel any booking at any point (`Upcoming`, `Ongoing`, or `Completed`, paid or unpaid); chargeable by default, opt out on cancel; prepaid cancelled as not chargeable keeps `paid` status — refunds outside the app (no `refunded` status in v1)
 - **Status renamed** — `In progress` → `Ongoing` (single-word booking status)
 - **Day-before reminder opt-in** — petsitter enables per booking (default off); sent morning of day before drop-off when enabled
 

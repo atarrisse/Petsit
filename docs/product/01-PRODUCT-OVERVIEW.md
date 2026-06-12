@@ -80,6 +80,7 @@ _Supersedes the 2026-06-11 invoicing / billing-period entries below._
 - **Billing mode** — `Monthly` or `Per booking` per family (default `Per booking`); see [PRD §6.1](03-PRODUCT-REQUIREMENTS.md#61-billing-mode)
 - **Statement model** — statements replace invoices; payment per booking (see [PRD §6](03-PRODUCT-REQUIREMENTS.md#6-statements))
 - **Statement month = drop-off month** — **`Monthly` families only** (whole stay, no cross-month split). Not stored or shown for `Per booking` families
+- **Statement period** — sent statements show the date span of included bookings (both billing modes)
 - **Unified terminology** — "Statement" everywhere (no separate "billing" label)
 - **Booking status renamed** — `In progress` → `Ongoing`
 

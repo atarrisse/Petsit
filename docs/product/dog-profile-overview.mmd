@@ -1,11 +1,11 @@
 flowchart TB
-  DOG["🐶 Dog<br/>hero object"]
+  DOG["Dog\nhero object"]
 
   subgraph PROFILE["Care profile — section groupings"]
     direction TB
 
     subgraph IDENTITY["Identity"]
-      ID_FIELDS["name · breed · gender · size · DOB<br/>energy · vaccinated · neutered · house-trained · insurance · contact_details"]
+      ID_FIELDS["name · breed · gender · size · DOB\nenergy · vaccinated · neutered · house-trained · insurance"]
     end
 
     subgraph ROUTINE["Routine"]
@@ -19,7 +19,7 @@ flowchart TB
     end
 
     subgraph HEALTH["Health"]
-      H_FIELDS["conditions · trauma · veterinarian · emergency contact"]
+      H_FIELDS["conditions · trauma · veterinarian"]
       MEDICATION["medication[]"]
     end
 
@@ -28,16 +28,25 @@ flowchart TB
     end
   end
 
-  FAMILY["Family<br/>name · email · phone · address"]
-  BOOKING["Booking<br/>drop-off · pick-up · service"]
-  EMERGENCY["Emergency contact<br/>name · phone"]
+  FAMILY["Family\nname · email · phone · address · billing_mode"]
+  BOOKING["Booking\ndogs · dates · status · payment"]
+  STATEMENT["Statement\nstart · end · total · sent"]
+  EMERGENCY["Emergency contact\nname · phone"]
+  OWNER["Owner account\nactive · revoked"]
+  PORTAL_INV["Portal invite"]
+  INTAKE["Intake link"]
 
   DOG --- PROFILE
-  DOG -.->|"has"| EMERGENCY
-  FAMILY -->|"has many"| DOG
-  FAMILY -.->|"shortcut: pre-fill & bulk-update"| EMERGENCY
-  DOG -->|"included in"| BOOKING
-  FAMILY -->|"billed to"| BOOKING
+  DOG -.->|has| EMERGENCY
+  FAMILY -->|has many| DOG
+  FAMILY -.->|emergency shortcut| EMERGENCY
+  FAMILY -->|one| OWNER
+  FAMILY -->|generates| PORTAL_INV
+  FAMILY -->|generates| INTAKE
+  DOG -->|included in| BOOKING
+  FAMILY -->|billed to| BOOKING
+  FAMILY -->|statements| STATEMENT
+  BOOKING -->|included in| STATEMENT
 
   classDef hero fill:#fef3c7,stroke:#d97706,stroke-width:2px
   classDef grouping fill:#e0f2fe,stroke:#0284c7
@@ -47,4 +56,4 @@ flowchart TB
   class DOG hero
   class IDENTITY,ROUTINE,BEHAVIOUR,HEALTH,SECURITY grouping
   class ID_FIELDS,R_FIELDS,B_FIELDS,H_FIELDS,S_FIELDS,FEEDING,BATHROOM,MEDICATION fields
-  class FAMILY,BOOKING,EMERGENCY context
+  class FAMILY,BOOKING,STATEMENT,EMERGENCY,OWNER,PORTAL_INV,INTAKE context
