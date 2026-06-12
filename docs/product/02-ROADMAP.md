@@ -121,6 +121,8 @@ Each milestone should be usable on its own before starting the next.
 
 ### 2026-06-12
 
+_Supersedes the 2026-06-11 billing-period entry below._
+
 - **Day-before reminder opt-in** — petsitter enables per booking (default off); see [PRD §3.2](03-PRODUCT-REQUIREMENTS.md#32-booking-inputs) and [§4.3.4](03-PRODUCT-REQUIREMENTS.md#434-day-before-reminder)
 - **Billing mode** — `Monthly` or `Per booking` per family (default `Per booking`); M4 month-end draft applies to `Monthly` families only (see [PRD §6.1](03-PRODUCT-REQUIREMENTS.md#61-billing-mode))
 - **M3 renamed Statements** — statements replace invoices; payment per booking (see [PRD §6](03-PRODUCT-REQUIREMENTS.md#6-statements))
@@ -129,7 +131,7 @@ Each milestone should be usable on its own before starting the next.
 ### 2026-06-11
 
 - **Group flat price removed** — multi-dog and special-rate adjustments use booking-level discount only
-- **Billing period rules** — invoice month determined by scheduled pick-up for completed stays; cross-month stays split by calendar month; in-progress stays included at month end for their portion
+- **Billing period rules** — invoice month determined by scheduled pick-up for completed stays; cross-month stays split by calendar month; in-progress stays included at month end for their portion. _Superseded 2026-06-12._
 - **Half-day day care deprecated** — M2 bookings and M3 rates use full-day day care only
 
 ### 2026-06-10

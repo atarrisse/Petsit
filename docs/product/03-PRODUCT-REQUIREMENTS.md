@@ -192,13 +192,20 @@ Feature-specific behavior (e.g. dog list scope in [§1.3](#13-dog-list-and-searc
 
 **M1 access emails:**
 
-| Trigger                   | Email                           | Recipient |
-| ------------------------- | ------------------------------- | --------- |
-| Owner account invite sent | Invitation to create an account | Owner     |
-| Dog intake form link sent | Invitation to submit a dog      | Owner     |
-| Dog intake form submitted | Dog created confirmation        | Petsitter |
+| Trigger                   | Email                           | Recipient           |
+| ------------------------- | ------------------------------- | ------------------- |
+| Owner account invite sent | Invitation to create an account | Owner               |
+| Dog intake form link sent | Invitation to submit a dog      | Owner               |
+| Dog intake form submitted | Dog created confirmation        | Owner and Petsitter |
 
-- Booking confirmations, booking update/cancellation emails, reminders, and statement delivery are part of **M4 workflow automation**
+**Other owner emails (by milestone):**
+
+| Milestone | Emails                                                                                                                                                                                                         |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **M3**    | Manually triggered [statement emails](#435-statement) ([§6.4](#64-statements))                                                                                                                                 |
+| **M4**    | Booking [confirmation](#431-booking-confirmation), [update](#432-booking-update), [cancellation](#433-booking-cancellation), and [day-before reminder](#434-day-before-reminder) ([§4](#4-calendar-and-email)) |
+| **M4**    | Automated end-of-month statement drafts for **`Monthly`** families only — petsitter approves before send ([§6.1](#61-billing-mode))                                                                            |
+
 - Invites expire after **30 days**
 - If invite expires unused: **notify petsitter**; petsitter manually triggers a new invite
 - Petsitter can **revoke** owner access after they have accepted
@@ -298,16 +305,16 @@ _Overnight_
 
 ### 3.4 Booking lifecycle
 
-`Upcoming` → `In progress` → `Completed`
+`Upcoming` → `Ongoing` → `Completed`
 
 Also: `Cancelled`
 
 Transitions are **manual**, triggered by the petsitter:
 
-| Transition              | Trigger                | Records                   |
-| ----------------------- | ---------------------- | ------------------------- |
-| Upcoming → In progress  | "Start booking" button | Actual drop-off timestamp |
-| In progress → Completed | "End booking" button   | Actual pick-up timestamp  |
+| Transition          | Trigger                | Records                   |
+| ------------------- | ---------------------- | ------------------------- |
+| Upcoming → Ongoing  | "Start booking" button | Actual drop-off timestamp |
+| Ongoing → Completed | "End booking" button   | Actual pick-up timestamp  |
 
 **Acceptance criteria**
 
@@ -316,12 +323,12 @@ Transitions are **manual**, triggered by the petsitter:
 - **Given** A booking is `Upcoming`
 - **When** Petsitter taps "Start booking"
 - **Then**
-  - Status becomes `In progress`
+  - Status becomes `Ongoing`
   - Actual drop-off timestamp is recorded
 
 **AC-3.4.2 — Complete booking**
 
-- **Given** A booking is `In progress`
+- **Given** A booking is `Ongoing`
 - **When** Petsitter taps "End booking"
 - **Then**
   - Status becomes `Completed`
@@ -360,7 +367,7 @@ Transitions are **manual**, triggered by the petsitter:
 
 **AC-3.5.2 — Cancel booking**
 
-- **Given** A booking is `Upcoming`, `In Progress` or `Completed`
+- **Given** A booking is `Upcoming`, `Ongoing` or `Completed`
 - **When** Petsitter cancels the booking
 - **Then** Status becomes `Cancelled`
 
@@ -375,7 +382,7 @@ Transitions are **manual**, triggered by the petsitter:
 **AC-3.5.5 — Resend statement after cancel**
 
 - **Given** A booking was included on a sent statement
-- **When** Petsitter cancels the booking as not chargeable and resends that statement month
+- **When** Petsitter cancels the booking as not chargeable and resends the statement it was on
 - **Then** The cancelled booking is excluded and the statement total reflects the change
 
 **AC-3.5.3 — Cancellation charge decision**
@@ -419,13 +426,13 @@ Automates **petsitter calendar sync** and **owner emails** in response to bookin
 
 ### 4.1 Automation overview
 
-| Trigger             | Petsitter calendar | Owner email                                             | Timing                                                            |
-| ------------------- | ------------------ | ------------------------------------------------------- | ----------------------------------------------------------------- |
-| Booking created     | Create event       | [Confirmation](#431-booking-confirmation)               | On save                                                           |
-| Booking updated     | Update event       | [Update notification](#432-booking-update)              | On change of date or time                                         |
-| Booking cancelled   | Remove event       | [Cancellation](#433-booking-cancellation)               | On cancel                                                         |
-| Day before drop-off | —                  | [Reminder](#434-day-before-reminder)                    | Morning of the day before drop-off, **if enabled on the booking** |
-| End of month        | —                  | [Statement](#61-billing-mode) (`Monthly` families only) | After petsitter review and approval                               |
+| Trigger             | Petsitter calendar | Owner email                                                 | Timing                                                            |
+| ------------------- | ------------------ | ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| Booking created     | Create event       | [Confirmation](#431-booking-confirmation)                   | On save                                                           |
+| Booking updated     | Update event       | [Update notification](#432-booking-update)                  | On change of date or time                                         |
+| Booking cancelled   | Remove event       | [Cancellation](#433-booking-cancellation)                   | On cancel                                                         |
+| Day before drop-off | —                  | [Reminder](#434-day-before-reminder)                        | Morning of the day before drop-off, **if enabled on the booking** |
+| End of month        | —                  | [Statement](#435-statement) draft (`Monthly` families only) | Month end — email sent only after petsitter **Approve**           |
 
 ### 4.2 Petsitter calendar sync
 
@@ -482,7 +489,7 @@ The reminder uses the per-dog override if one exists; otherwise falls back to th
 _Sent when the petsitter sends or approves a statement ([§6.4](#64-statements))._
 
 - Family name
-- Statement month
+- **Statement period** — **Start date** through **End date** on the statement ([§6.3.1](#631-statement-form--two-input-modes))
 - Itemised list of included bookings — separate line per dog per booking
 - Discount line per booking when set
 - **Total due** for all bookings on the statement
@@ -598,7 +605,7 @@ _Available from [M3](02-ROADMAP.md#m3--statements)._
   - **Running total** — unpaid eligible bookings ([§6.3](#63-which-bookings-go-on-a-statement)) whose scheduled drop-off falls in the current calendar month
   - **Forecast total** — upcoming bookings whose scheduled drop-off falls in the current calendar month (full stay amount)
   - **Estimated total** — running + forecast
-- **Statement history** — sent statements (statement month, date sent, total due)
+- **Statement history** — statement period (Start → End), date sent, total due
 - Bookings show **payment status** (unpaid / paid)
 
 Statements may also arrive by email — see [statement email](#435-statement).
@@ -615,21 +622,21 @@ How and when statements are sent depends on the family's **billing mode**.
 
 Each family has a **`Billing mode`** (default `Per booking`).
 
-| Billing mode    | How statements are sent                                                                        |
-| --------------- | ---------------------------------------------------------------------------------------------- |
-| **Monthly**     | Calendar-month statements — one per family per statement month. M4 end-of-month draft applies. |
-| **Per booking** | Petsitter is prompted after each statement-eligible booking. No M4 month-end draft.            |
+| Billing mode    | How statements are sent                                                                                                                                                        |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Monthly**     | **One-off statements** anytime via the statement form ([§6.4](#64-statements)). **M4:** automated month-end **draft** — petsitter approves to send ([§6.1](#61-billing-mode)). |
+| **Per booking** | **One-off statements** anytime via the statement form. Post-stay prompt opens the form ([§6.1.2](#612-per-booking-prompt)).                                                    |
 
-**M3 — manual statements** _(both modes)_
+**M3 — one-off statements** _(both billing modes)_
 
-- Petsitter can send statements manually
+- At any point, petsitter can create and send a statement manually ([§6.4](#64-statements))
 - Owners view payment status and statement history in the portal
 
-**M4 — automated statements** _(`Monthly` families only — builds on M3)_
+**M4 — automated drafts** _(`Monthly` families only — builds on M3)_
 
-- System drafts a statement automatically at end of each month (one per **`Monthly`** family with eligible bookings)
-- Petsitter reviews and approves before the statement email is sent
-- Approved statement is emailed to the owner ([§4.3.5](#435-statement)), in addition to portal visibility
+- At end of each month, the system generates a **draft statement** per **`Monthly`** family with eligible unpaid bookings ( **Start** = 1st of that month, **End** = last day of that month)
+- Petsitter reviews the draft, may adjust it using either input mode on the statement form ([§6.3.1](#631-statement-form--two-input-modes)), and clicks **Approve** to send the statement email ([§4.3.5](#435-statement))
+- Nothing is emailed until the petsitter approves
 
 #### 6.1.2 Per booking prompt
 
@@ -640,11 +647,11 @@ For families with `Billing mode = Per booking`, the app prompts the petsitter wh
 
 **Prompt options:**
 
-| Option                   | Effect                                                                                                   |
-| ------------------------ | -------------------------------------------------------------------------------------------------------- |
-| **Do nothing**           | Booking stays unpaid and unstated. Petsitter can send a statement later from the family or booking view. |
-| **Charge this booking**  | Statement email covers **only** the triggering booking.                                                  |
-| **Charge running total** | Statement covers all "open tab" - unpaid bookings, completed or ongoing - for this family.               |
+| Option                   | Effect                                                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Do nothing**           | Booking stays unpaid and unstated. Petsitter can send a statement later from the family or booking view.                                   |
+| **Charge this booking**  | Opens the [statement form](#64-statements) with the triggering booking **bulk-selected**; **Start**/**End** calculated from that selection |
+| **Charge running total** | Opens the statement form with **all** unpaid eligible bookings **bulk-selected**; **Start**/**End** calculated from that selection         |
 
 **Acceptance criteria**
 
@@ -660,29 +667,35 @@ For families with `Billing mode = Per booking`, the app prompts the petsitter wh
 - **When** Petsitter taps "End booking"
 - **Then** The per-booking prompt is not shown
 
-**AC-6.1.3 — Statement for this booking**
+**AC-6.1.3 — Charge this booking**
 
-- **Given** Petsitter chooses "Send statement for this booking" on the per-booking prompt
-- **When** The statement is sent
-- **Then** The statement includes only the triggering booking and the email is sent
+- **Given** Petsitter chooses "Charge this booking" after a booking with scheduled drop-off 15 Jan and pick-up 16 Jan becomes eligible
+- **When** The statement form opens
+- **Then** Only that booking is selected, **Start** is 15 Jan, and **End** is 16 Jan
 
-**AC-6.1.4 — Statement for running total**
+**AC-6.1.4 — Charge running total**
 
-- **Given** A family has three unpaid eligible bookings (drop-off 1 Jan, 8 Jan, 15 Jan) and the 15 Jan booking just became statement-eligible
+- **Given** A family has three unpaid eligible bookings (drop-off 1 Jan / pick-up 1 Jan, 8 Jan / 9 Jan, 15 Jan / 16 Jan)
 - **When** Petsitter chooses "Charge running total"
-- **Then** All three bookings are included on one statement, ordered by drop-off date
+- **Then** All three are bulk-selected, **Start** is 1 Jan, and **End** is 16 Jan
 
-**AC-6.1.5 — Running total includes all unpaid bookings**
+**AC-6.1.5 — Running total includes prior unpaid bookings**
 
-- **Given** The 1 Jan booking is on a sent statement but still unpaid, and the 8 Jan and 15 Jan bookings are also unpaid
+- **Given** The 1 Jan booking is on a sent statement but still unpaid, and the 8 Jan and 15 Jan bookings are also unpaid and eligible
 - **When** Petsitter completes the 15 Jan booking and chooses "Charge running total"
-- **Then** The statement includes all three bookings (1 Jan, 8 Jan, and 15 Jan), ordered by drop-off date
+- **Then** All three bookings are bulk-selected on the statement form
 
 **AC-6.1.6 — M4 draft skips Per booking families**
 
 - **Given** A family has `Billing mode = Per booking` and unpaid eligible bookings at month end
 - **When** M4 end-of-month automation runs
 - **Then** No statement draft is created for that family
+
+**AC-6.1.7 — M4 draft requires approval**
+
+- **Given** A **`Monthly`** family has a draft statement at month end
+- **When** The petsitter has not clicked **Approve**
+- **Then** No statement email is sent to the owner
 
 ### 6.2 Rates
 
@@ -746,96 +759,105 @@ Which bookings are eligible when sending a statement:
 | Booking status              | Included? |
 | --------------------------- | --------- |
 | `Completed`                 | Yes       |
-| `In progress`               | Yes       |
+| `Ongoing`                   | Yes       |
 | `Cancelled`, chargeable     | Yes       |
 | `Cancelled`, not chargeable | No        |
 | `Upcoming`                  | No        |
 
 Only **unpaid** bookings are included. Paid bookings are never on a new statement.
 
-#### 6.3.1 Statement month rules
+#### 6.3.1 Statement form — two input modes
 
-Shared rules (both billing modes):
+The statement form is the same for **all families** (both billing modes). Petsitter composes a one-off statement using **either** input mode (or both — they stay in sync):
 
-- **Statement month** — the calendar month of **scheduled drop-off** for a single-booking statement; for statements covering multiple bookings, the calendar month of the **latest included booking's** scheduled drop-off
-- **Full stay per inclusion** — each time a booking appears on a statement, it is included for the **full stay** (all days/nights per rate rules above). Bookings are not split across calendar months — cross-month stays are billed in full (e.g. drop-off 28 Jan, pick-up 2 Feb → all 5 boarding nights)
-- **Open tab** — while **unpaid**, a booking may appear on multiple statements; running total always lists all unpaid eligible bookings for the family, regardless of prior statements sent
-- **`Completed` and `In progress` bookings** — eligible when included on a statement
-- **`Upcoming`** — never on a statement
-- **Chargeable cancellations** — eligible at the full booking amount
+| Mode            | Petsitter action                                                            | Result                                                                                                                                |
+| --------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Date range**  | Set **Start date** and **End date**                                         | All unpaid eligible bookings whose scheduled drop-off falls within Start–End (inclusive) are **included**                             |
+| **Bulk select** | Check bookings from the list of all unpaid eligible bookings for the family | **Start** and **End** are **calculated from the selection**: earliest selected scheduled drop-off → latest selected scheduled pick-up |
 
-**`Monthly` families:**
+**Defaults** when the form opens (no prior selection):
 
-- **One statement per family per statement month** — at most one statement per family for a given statement month; sending again **resends** the same statement (updated totals if bookings changed)
-- Eligible bookings are included when the petsitter sends that **drop-off month's** statement
+| Field          | Default                                                                            |
+| -------------- | ---------------------------------------------------------------------------------- |
+| **Start date** | Earliest scheduled **drop-off date** among unpaid eligible bookings for the family |
+| **End date**   | Today (current calendar day)                                                       |
 
-**`Per booking` families:**
+All bookings matching the current Start–End are selected. Petsitter may switch modes at any time — changing dates updates the selection; changing the selection updates the dates.
 
-- **No one-statement-per-month constraint** — multiple statements per family per calendar month are allowed
-- Bookings are included when the petsitter sends via the per-booking prompt or manual send
+**Eligible booking** — per [§6.3](#63-which-bookings-go-on-a-statement): unpaid; `Completed`, `Ongoing`, or chargeable `Cancelled`; not `Upcoming`.
+
+**Send** requires at least one included booking. See [§6.4](#64-statements).
+
+Shared rules:
+
+- **Statement period** (display) — **Start date** through **End date** on the sent statement (portal and email)
+- **Full stay per inclusion** — each included booking is billed for the **full stay** (all days/nights per rate rules). Bookings are not split across calendar months (e.g. drop-off 28 Jan, pick-up 2 Feb → all 5 boarding nights)
+- **Open tab** — while **unpaid**, a booking may appear on multiple statements
 
 **Acceptance criteria**
 
-**AC-6.3.1 — Bill completed stays**
+**AC-6.3.1 — Form defaults (date range)**
 
-- **Given** A booking is `Completed`, scheduled drop-off falls in the statement month, and the booking is unpaid
-- **When** Petsitter sends that month's statement for the family
-- **Then** The booking is included for the full stay
+- **Given** A family has unpaid eligible bookings with earliest scheduled drop-off 8 Jan and today is 20 Jan
+- **When** Petsitter opens the statement form
+- **Then** **Start** is 8 Jan, **End** is 20 Jan, and all matching bookings are selected
 
-**AC-6.3.2 — Bill chargeable cancellations**
+**AC-6.3.2 — Date range selects bookings**
 
-_Chargeable_
+- **Given** Unpaid eligible bookings with drop-off 5 Jan and 15 Jan, and today is 31 Jan
+- **When** Petsitter sets **Start** 1 Jan and **End** 10 Jan
+- **Then** Only the 5 Jan booking is selected
 
-- **Given** A cancelled booking marked chargeable whose scheduled drop-off falls in the statement month and is unpaid
-- **When** Petsitter sends that month's statement for the family
-- **Then** The booking is included for the full booking amount
+**AC-6.3.3 — Bulk select calculates dates**
 
-_Not chargeable_
+- **Given** Unpaid eligible bookings with drop-off 1 Jan / pick-up 1 Jan, 8 Jan / 9 Jan, and 15 Jan / 16 Jan
+- **When** Petsitter bulk-selects all three
+- **Then** **Start** is 1 Jan and **End** is 16 Jan
 
-- **Given** A cancelled booking marked not chargeable
-- **When** Petsitter sends a statement for that statement month
-- **Then** The booking is excluded
+**AC-6.3.4 — Bulk select one booking**
 
-**AC-6.3.3 — In progress at month end**
+- **Given** An unpaid eligible booking with drop-off 15 Jan and pick-up 16 Jan
+- **When** Petsitter bulk-selects only that booking
+- **Then** **Start** is 15 Jan and **End** is 16 Jan
 
-- **Given** A boarding booking with drop-off 28 Jan and pick-up 2 Feb is `In progress` on 31 Jan and is unpaid
-- **When** Petsitter sends the January statement on 31 Jan
-- **Then** The booking is included for all 5 nights on the January statement (not split to February)
+**AC-6.3.5 — Ongoing cross-month stay**
 
-**AC-6.3.4 — Cross-month stay when completed**
+- **Given** An unpaid `Ongoing` boarding booking with drop-off 28 Jan and pick-up 2 Feb, selected via **Start** 1 Jan and **End** 31 Jan
+- **When** Petsitter sends the statement
+- **Then** The booking is included for all 5 nights (not split to February)
 
-- **Given** A boarding booking with drop-off 28 Jan and pick-up 2 Feb is `Completed` and unpaid
-- **When** Petsitter sends the January statement
-- **Then** The booking is included for all 5 nights on the January statement (not split to February)
+**AC-6.3.6 — Not chargeable cancellation excluded**
+
+- **Given** A not-chargeable `Cancelled` booking with scheduled drop-off 10 Jan
+- **When** Petsitter sets **Start** 1 Jan and **End** 31 Jan
+- **Then** The booking is not in the list and cannot be selected
 
 ### 6.4 Statements
 
-A **statement** records that the petsitter emailed a family about a set of bookings for a statement month. It is not a formal invoice document — it groups bookings and snapshots the total sent.
+A **statement** records that the petsitter emailed a family about a set of bookings. It is not a formal invoice document — it groups bookings and snapshots the total sent.
 
-| Field     | Definition                                  |
-| --------- | ------------------------------------------- |
-| Family    | Client household                            |
-| Month     | Calendar month of scheduled drop-off        |
-| Bookings  | Unpaid eligible bookings included when sent |
-| Total due | Sum of included booking totals at send time |
-| Sent at   | When the statement email was sent           |
+| Field            | Definition                                                               |
+| ---------------- | ------------------------------------------------------------------------ |
+| Family           | Client household                                                         |
+| Start date       | Earliest included scheduled drop-off — from date range or bulk selection |
+| End date         | Latest included scheduled pick-up — from date range or bulk selection    |
+| Statement period | Same as Start → End on the sent statement (shown in portal and email)    |
+| Bookings         | Unpaid eligible bookings included when sent                              |
+| Total due        | Sum of included booking totals at send time                              |
+| Sent at          | When the statement email was sent                                        |
 
-**Send statement** (manual — M3, approve draft — M4, or per-booking prompt):
+**Send statement** — one-off (M3, or M4 after approval):
 
-_`Monthly` family_
-
-1. Petsitter selects a family and statement month (defaults to current month)
-2. App lists eligible unpaid bookings for that month
-3. Petsitter clicks **Send statement** → email sent → statement created or updated (resend)
+1. Petsitter opens the statement form for a family (or from a per-booking prompt — [§6.1.2](#612-per-booking-prompt))
+2. Petsitter composes the statement using **date range** and/or **bulk select** ([§6.3.1](#631-statement-form--two-input-modes))
+3. Petsitter clicks **Send statement** → email sent → statement created
 4. Included bookings are linked to the statement
 
-_`Per booking` family_
+**M4 month-end draft (`Monthly` families only):**
 
-1. Petsitter selects a family (or starts from a booking)
-2. App lists all unpaid eligible bookings for the family
-3. Petsitter selects which bookings to include (or uses the per-booking prompt options — **Charge running total** selects all)
-4. Petsitter clicks **Send statement** → email sent → statement created
-5. Included bookings are linked to the statement
+1. System creates a **draft** per **`Monthly`** family: **Start** = 1st of the month, **End** = last day of the month; all matching unpaid eligible bookings selected
+2. Petsitter reviews the draft, may adjust via either input mode
+3. Petsitter clicks **Approve** → statement email sent (same as step 3 above)
 
 **Statement email content** — same as [§4.3.5](#435-statement).
 
@@ -853,21 +875,27 @@ _`Per booking` family_
 - **When** The statement email is sent
 - **Then** The email shows one discount line for that booking reflecting the agreed reduction
 
-**AC-6.4.3 — One statement per family per month (`Monthly`)**
+**AC-6.4.3 — Approve M4 draft sends email**
 
-- **Given** A **`Monthly`** family's statement was already sent for January 2026
-- **When** Petsitter sends the January statement again
-- **Then** The same statement is updated and the email is resent (bookings and total reflect current data)
+- **Given** A **`Monthly`** family has a month-end draft statement
+- **When** Petsitter clicks **Approve**
+- **Then** The statement email is sent and the statement appears in history
 
-**AC-6.4.4 — Multiple statements per month (`Per booking`)**
+**AC-6.4.4 — Resend creates new statement**
 
-- **Given** A **`Per booking`** family already has a statement sent in January 2026
-- **When** Petsitter sends another statement for a different unpaid booking in January
-- **Then** A new statement is created (not a resend of the previous one)
+- **Given** A statement was already sent for a family
+- **When** Petsitter composes and sends again with adjusted bookings or dates
+- **Then** A new statement email is sent with updated totals and period
+
+**AC-6.4.5 — Statement period matches Start and End**
+
+- **Given** A statement is sent with **Start** 1 Jan and **End** 16 Jan
+- **When** The owner views the statement email or history
+- **Then** The statement period shown is 1 Jan through 16 Jan
 
 ### 6.5 Payment
 
-- Families pay **outside the app** (e.g. bank transfer)
+- Families pay **outside the app**
 - Each booking has **payment status**: `unpaid` or `paid`
 - Petsitter marks bookings **paid** individually, or **marks all bookings on a statement paid** in one action
 - In-app payment processing: out of scope
@@ -890,7 +918,7 @@ _`Per booking` family_
 
 - Fix incorrect amounts by **editing the booking** (allowed until the booking is paid)
 - Remove a booking that should not count by **cancelling** it ([§3.5](#35-edit-and-cancel)) — same chargeable / not chargeable choice
-- **Resend the statement** for that statement month to email the owner updated totals
+- **Resend the statement** to email the owner updated totals — reopen the form (same or adjusted **Start**/**End**) or resend from statement history
 - No void/reissue workflow — statements are send records, not editable documents
 
 ## 7. Out of scope (v1)
@@ -907,13 +935,15 @@ See [01-PRODUCT-OVERVIEW.md — Out of scope](01-PRODUCT-OVERVIEW.md#out-of-scop
 
 - **Billing mode** — `Monthly` or `Per booking` per family (default `Per booking`). `Monthly` families use calendar-month statements and M4 end-of-month drafts; `Per booking` families get a post-stay prompt (do nothing / charge this booking / charge running total)
 - **Statement model** — no invoice entity; statements group bookings and trigger statement emails; payment tracked per booking
-- **Statement month = drop-off month** — whole booking on one statement; no cross-month split; `In progress` and `Completed` both eligible
+- **Statement month = drop-off month** — **`Monthly` families only**; whole booking on one statement; no cross-month split; `Ongoing` and `Completed` both eligible. Not stored or shown for **`Per booking`** families. _Superseded — see Statement period._
+- **Statement period** — earliest included scheduled drop-off date through latest included scheduled pick-up date; shown on every statement (both billing modes)
 - **Running total = open tab** — includes all unpaid eligible bookings for the family, even if already on a prior sent statement; bookings may appear on multiple statements while unpaid
 - **Unified terminology** — "Statement" everywhere (no separate "billing" label)
 
 **Bookings**
 
-- **Cancel** — petsitter can cancel any booking at any point (`Upcoming`, `In progress`, or `Completed`, paid or unpaid); chargeable / not chargeable choice; prepaid cancelled as not chargeable keeps `paid` status — refunds outside the app (no `refunded` status in v1)
+- **Cancel** — petsitter can cancel any booking at any point (`Upcoming`, `Ongoing`, or `Completed`, paid or unpaid); chargeable / not chargeable choice; prepaid cancelled as not chargeable keeps `paid` status — refunds outside the app (no `refunded` status in v1)
+- **Status renamed** — `In progress` → `Ongoing` (single-word booking status)
 - **Day-before reminder opt-in** — petsitter enables per booking (default off); sent morning of day before drop-off when enabled
 
 **Access and email**

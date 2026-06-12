@@ -152,29 +152,32 @@ Stored on each dog. The [family profile](03-PRODUCT-REQUIREMENTS.md#12-families)
 
 ### Booking (related object)
 
-| Field                    | Type        | Notes                                                                                                                             |
-| ------------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| drop_off                 | datetime    |                                                                                                                                   |
-| pick_up                  | datetime    |                                                                                                                                   |
-| service_type             | string      |                                                                                                                                   |
-| status                   | string      |                                                                                                                                   |
-| discount_type            | string      | `percentage` or `fixed` — optional                                                                                                |
-| discount_value           | decimal     | Optional                                                                                                                          |
-| send_day_before_reminder | boolean     | Default `false`; petsitter opts in per booking — see [§3.2](03-PRODUCT-REQUIREMENTS.md#32-booking-inputs)                         |
-| payment_status           | string      | `unpaid` or `paid` — see [§6.5](03-PRODUCT-REQUIREMENTS.md#65-payment)                                                            |
-| statements               | Statement[] | Bookings may appear on multiple sent statements while unpaid — see [§6.3.1](03-PRODUCT-REQUIREMENTS.md#631-statement-month-rules) |
+| Field                    | Type        | Notes                                                                                                                                       |
+| ------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| drop_off                 | datetime    |                                                                                                                                             |
+| pick_up                  | datetime    |                                                                                                                                             |
+| service_type             | string      |                                                                                                                                             |
+| status                   | string      | `Upcoming`, `Ongoing`, `Completed`, or `Cancelled` — see [§3.4](03-PRODUCT-REQUIREMENTS.md#34-booking-lifecycle)                            |
+| discount_type            | string      | `percentage` or `fixed` — optional                                                                                                          |
+| discount_value           | decimal     | Optional                                                                                                                                    |
+| send_day_before_reminder | boolean     | Default `false`; petsitter opts in per booking — see [§3.2](03-PRODUCT-REQUIREMENTS.md#32-booking-inputs)                                   |
+| payment_status           | string      | `unpaid` or `paid` — see [§6.5](03-PRODUCT-REQUIREMENTS.md#65-payment)                                                                      |
+| statements               | Statement[] | Bookings may appear on multiple sent statements while unpaid — see [§6.3.1](03-PRODUCT-REQUIREMENTS.md#631-statement-form--two-input-modes) |
 
 ### Statement (related object)
 
-Groups bookings included in one statement email to a family for a statement month. Not a formal invoice — a send record with a total snapshot.
+Groups bookings included in one statement email to a family. Not a formal invoice — a send record with a total snapshot.
 
-| Field           | Type      | Notes                                |
-| --------------- | --------- | ------------------------------------ |
-| family          | Family    |                                      |
-| statement_month | date      | Calendar month of scheduled drop-off |
-| total_due       | decimal   | Snapshot at send time                |
-| sent_at         | datetime  | When the statement email was sent    |
-| bookings        | Booking[] | Unpaid eligible bookings included    |
+| Field        | Type      | Notes                                                                                                                                                                   |
+| ------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| family       | Family    |                                                                                                                                                                         |
+| range_start  | date      | **Start date** — earliest included scheduled drop-off; synced with date range or bulk select ([§6.3.1](03-PRODUCT-REQUIREMENTS.md#631-statement-form--two-input-modes)) |
+| range_end    | date      | **End date** — latest included scheduled pick-up; synced with date range or bulk select                                                                                 |
+| period_start | date      | Same as `range_start` on sent statements (display / email)                                                                                                              |
+| period_end   | date      | Same as `range_end` on sent statements (display / email)                                                                                                                |
+| total_due    | decimal   | Snapshot at send time                                                                                                                                                   |
+| sent_at      | datetime  | When the statement email was sent                                                                                                                                       |
+| bookings     | Booking[] | Unpaid eligible bookings included                                                                                                                                       |
 
 ---
 

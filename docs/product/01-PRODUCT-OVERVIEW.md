@@ -42,9 +42,9 @@ What the platform does — at a high level:
 1. **Dogs and their families** — Centralized client and care records
 2. **Owner invites** — Controlled access for dog owners
 3. **Bookings** — Full-day day care and boarding stays I create and manage
-4. **Calendar and email** — Automatic events and confirmations on booking
+4. **Calendar and email** — Automatic Google Calendar sync and booking emails (confirmations, updates, optional day-before reminders) on create, change, and cancel
 5. **Owner portal** — Read-only; starts as a dog list with full profile, then bookings and payment status
-6. **Statements** — Monthly or combined billing for regular clients, so they don’t pay after every stay.
+6. **Statements** — Per-family billing: **`Per booking`** (default, prompt after each stay) or **`Monthly`** (calendar-month statements); email what families owe ("open tav") and track payment per stay
 
 _Behavioral detail for each area: [03-PRODUCT-REQUIREMENTS.md](03-PRODUCT-REQUIREMENTS.md) — Build order and availability per milestone: [02-ROADMAP.md](02-ROADMAP.md)_
 
@@ -75,16 +75,19 @@ _Behavioral detail for each area: [03-PRODUCT-REQUIREMENTS.md](03-PRODUCT-REQUIR
 
 ### 2026-06-12
 
+_Supersedes the 2026-06-11 invoicing / billing-period entries below._
+
 - **Billing mode** — `Monthly` or `Per booking` per family (default `Per booking`); see [PRD §6.1](03-PRODUCT-REQUIREMENTS.md#61-billing-mode)
 - **Statement model** — statements replace invoices; payment per booking (see [PRD §6](03-PRODUCT-REQUIREMENTS.md#6-statements))
-- **Statement month = drop-off month** — whole booking on one statement; no cross-month split; `In progress` and `Completed` both eligible
+- **Statement month = drop-off month** — **`Monthly` families only** (whole stay, no cross-month split). Not stored or shown for `Per booking` families
 - **Unified terminology** — "Statement" everywhere (no separate "billing" label)
+- **Booking status renamed** — `In progress` → `Ongoing`
 
 ### 2026-06-11
 
 - **Half-day day care deprecated** — day care is full-day only; no half-day duration option on bookings or in the rate model
 - **Group flat price removed** — multi-dog and special-rate adjustments use booking-level discount only (see [PRD §6.2](03-PRODUCT-REQUIREMENTS.md#62-rates))
-- **Invoicing rules clarified** — cross-month stays split by calendar month; in-progress stays billable through invoice date; invoiced bookings cannot be cancelled (void and reissue instead)
+- **Invoicing rules clarified** — cross-month stays split by calendar month; in-progress stays billable through invoice date; invoiced bookings cannot be cancelled (void and reissue instead). _Superseded 2026-06-12._
 
 ### 2026-06-07
 
